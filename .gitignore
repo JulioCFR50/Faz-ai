@@ -1,0 +1,9 @@
+# Biblioteca de terceiros baixada automaticamente no build (Dockerfile/README já fazem isso)
+server/httplib.h
+
+# Binário compilado localmente (fora do Docker)
+fazai_server
+
+# Arquivos comuns de SO/editor
+.DS_Store
+Thumbs.db

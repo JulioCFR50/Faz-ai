@@ -1,0 +1,827 @@
+<title>Faz Ai</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+:root{
+  --bg:#f4f8f4;
+  --bg-deep:#e9f1ea;
+  --surface:#ffffff;
+  --surface-2:#f0f6f1;
+  --text:#152018;
+  --text-muted:#5c6f61;
+  --border:#dbe6dd;
+  --accent:#1f7a4d;
+  --accent-strong:#12522f;
+  --accent-soft:#e3f2e6;
+  --danger:#b1402c;
+  --danger-soft:#fbebe6;
+  --shadow: 0 1px 2px rgba(20,40,25,.04), 0 8px 24px -8px rgba(20,40,25,.12);
+  --radius-l:20px;
+  --radius-m:13px;
+  --radius-s:8px;
+  --pattern-opacity:.09;
+}
+:root:not([data-theme="light"]){
+  @media (prefers-color-scheme: dark){
+    --bg:#0e1712;
+    --bg-deep:#0a120e;
+    --surface:#16221b;
+    --surface-2:#1c2a21;
+    --text:#eaf3ec;
+    --text-muted:#8fa596;
+    --border:#2a3a2f;
+    --accent:#4fbf87;
+    --accent-strong:#7fd9a8;
+    --accent-soft:#1d3226;
+    --danger:#e58876;
+    --danger-soft:#33201c;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px -10px rgba(0,0,0,.5);
+    --pattern-opacity:.16;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0e1712;
+  --bg-deep:#0a120e;
+  --surface:#16221b;
+  --surface-2:#1c2a21;
+  --text:#eaf3ec;
+  --text-muted:#8fa596;
+  --border:#2a3a2f;
+  --accent:#4fbf87;
+  --accent-strong:#7fd9a8;
+  --accent-soft:#1d3226;
+  --danger:#e58876;
+  --danger-soft:#33201c;
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px -10px rgba(0,0,0,.5);
+  --pattern-opacity:.16;
+}
+
+*{box-sizing:border-box}
+body{
+  position:relative;
+  margin:0;
+  background:
+    radial-gradient(circle at 12% 8%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 40%),
+    radial-gradient(circle at 88% 92%, color-mix(in srgb, var(--accent) 8%, transparent), transparent 45%),
+    var(--bg);
+  color:var(--text);
+  font-family:'Work Sans', system-ui, sans-serif;
+  min-height:100%;
+}
+/* Textura de fundo com ícones de ferramentas (chave, plugue, manômetro, trena) —
+   remete ao universo de serviços/manutenção do app. Usa mask (não background-image)
+   para herdar a cor de acento do tema automaticamente, claro ou escuro. */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  background-color:var(--accent);
+  opacity:var(--pattern-opacity);
+  -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cpolygon points='55.6,49 40,58 24.4,49 24.4,31 40,22 55.6,31' fill='none' stroke='black' stroke-width='2.5'/%3E%3Ccircle cx='40' cy='40' r='5' fill='black'/%3E%3Ccircle cx='150' cy='50' r='22' fill='none' stroke='black' stroke-width='2.5'/%3E%3Cline x1='150' y1='50' x2='164' y2='38' stroke='black' stroke-width='2.5' stroke-linecap='round'/%3E%3Cline x1='150' y1='30' x2='150' y2='34' stroke='black' stroke-width='2.5'/%3E%3Cline x1='172' y1='50' x2='168' y2='50' stroke='black' stroke-width='2.5'/%3E%3Cline x1='150' y1='70' x2='150' y2='66' stroke='black' stroke-width='2.5'/%3E%3Cline x1='128' y1='50' x2='132' y2='50' stroke='black' stroke-width='2.5'/%3E%3Crect x='30' y='140' width='30' height='24' rx='4' fill='none' stroke='black' stroke-width='2.5'/%3E%3Cline x1='38' y1='140' x2='38' y2='130' stroke='black' stroke-width='2.5' stroke-linecap='round'/%3E%3Cline x1='52' y1='140' x2='52' y2='130' stroke='black' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M45 164 q0 14 14 14' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round'/%3E%3Cg transform='rotate(-18 150 155)'%3E%3Crect x='120' y='146' width='60' height='18' rx='3' fill='none' stroke='black' stroke-width='2.5'/%3E%3Cline x1='132' y1='146' x2='132' y2='154' stroke='black' stroke-width='2'/%3E%3Cline x1='144' y1='146' x2='144' y2='158' stroke='black' stroke-width='2'/%3E%3Cline x1='156' y1='146' x2='156' y2='154' stroke='black' stroke-width='2'/%3E%3Cline x1='168' y1='146' x2='168' y2='158' stroke='black' stroke-width='2'/%3E%3C/g%3E%3C/svg%3E");
+  mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cpolygon points='55.6,49 40,58 24.4,49 24.4,31 40,22 55.6,31' fill='none' stroke='black' stroke-width='2.5'/%3E%3Ccircle cx='40' cy='40' r='5' fill='black'/%3E%3Ccircle cx='150' cy='50' r='22' fill='none' stroke='black' stroke-width='2.5'/%3E%3Cline x1='150' y1='50' x2='164' y2='38' stroke='black' stroke-width='2.5' stroke-linecap='round'/%3E%3Cline x1='150' y1='30' x2='150' y2='34' stroke='black' stroke-width='2.5'/%3E%3Cline x1='172' y1='50' x2='168' y2='50' stroke='black' stroke-width='2.5'/%3E%3Cline x1='150' y1='70' x2='150' y2='66' stroke='black' stroke-width='2.5'/%3E%3Cline x1='128' y1='50' x2='132' y2='50' stroke='black' stroke-width='2.5'/%3E%3Crect x='30' y='140' width='30' height='24' rx='4' fill='none' stroke='black' stroke-width='2.5'/%3E%3Cline x1='38' y1='140' x2='38' y2='130' stroke='black' stroke-width='2.5' stroke-linecap='round'/%3E%3Cline x1='52' y1='140' x2='52' y2='130' stroke='black' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M45 164 q0 14 14 14' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round'/%3E%3Cg transform='rotate(-18 150 155)'%3E%3Crect x='120' y='146' width='60' height='18' rx='3' fill='none' stroke='black' stroke-width='2.5'/%3E%3Cline x1='132' y1='146' x2='132' y2='154' stroke='black' stroke-width='2'/%3E%3Cline x1='144' y1='146' x2='144' y2='158' stroke='black' stroke-width='2'/%3E%3Cline x1='156' y1='146' x2='156' y2='154' stroke='black' stroke-width='2'/%3E%3Cline x1='168' y1='146' x2='168' y2='158' stroke='black' stroke-width='2'/%3E%3C/g%3E%3C/svg%3E");
+  -webkit-mask-repeat:repeat;
+  mask-repeat:repeat;
+  -webkit-mask-size:200px 200px;
+  mask-size:200px 200px;
+}
+h1,h2,h3{ font-family:'Fraunces', Georgia, serif; text-wrap:balance; margin:0; }
+.mono, input, select, textarea, .valor, .telefone-link { font-family:'Work Sans', system-ui, sans-serif; }
+.num, .mono-num { font-family:'IBM Plex Mono', monospace; font-variant-numeric: tabular-nums; }
+
+.stage{
+  position:relative;
+  z-index:1;
+  max-width:1180px;
+  margin:0 auto;
+  padding:40px 24px 72px;
+  display:grid;
+  grid-template-columns: 1.05fr 1.6fr;
+  gap:44px;
+  align-items:start;
+}
+@media (max-width: 900px){
+  .stage{ grid-template-columns: 1fr; padding:24px 16px 56px; gap:28px; }
+}
+
+/* ---------- coluna esquerda: intro ---------- */
+.intro{ position:sticky; top:24px; }
+.eyebrow{
+  display:inline-flex; align-items:center; gap:8px;
+  font-size:.72rem; font-weight:600; letter-spacing:.09em; text-transform:uppercase;
+  color:var(--accent-strong); background:var(--accent-soft);
+  padding:6px 12px; border-radius:100px; margin-bottom:18px;
+}
+.eyebrow .pt{width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.intro h1{ font-size:2.5rem; line-height:1.05; font-weight:600; color:var(--text); }
+.intro h1 em{ font-style:italic; font-weight:500; color:var(--accent-strong); }
+.intro p.lede{ color:var(--text-muted); font-size:1.02rem; line-height:1.6; margin:16px 0 0; max-width:36ch; }
+
+.stack-lista{ margin-top:28px; display:flex; flex-direction:column; gap:14px; }
+.stack-item{ display:flex; gap:12px; align-items:flex-start; }
+.stack-item .marca{
+  width:26px; height:26px; border-radius:7px; background:var(--accent-soft); color:var(--accent-strong);
+  display:flex; align-items:center; justify-content:center; font-size:.78rem; font-weight:700; flex:none; margin-top:1px;
+  font-family:'IBM Plex Mono', monospace;
+}
+.stack-item .txt b{ font-size:.92rem; }
+.stack-item .txt span{ display:block; font-size:.84rem; color:var(--text-muted); margin-top:1px; }
+
+.aviso{
+  margin-top:28px; padding:14px 16px; border-radius:var(--radius-m);
+  background:var(--surface); border:1px solid var(--border); box-shadow:var(--shadow);
+  font-size:.84rem; color:var(--text-muted); line-height:1.55;
+}
+.aviso b{ color:var(--text); }
+
+.credenciais{
+  margin-top:14px; padding:12px 14px; border-radius:var(--radius-m);
+  background:var(--surface-2); border:1px dashed var(--border);
+  font-size:.82rem; color:var(--text-muted);
+}
+.credenciais .linha{ display:flex; justify-content:space-between; padding:3px 0; }
+.credenciais .linha b{ color:var(--text); font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:.8rem; }
+
+/* ---------- coluna direita: telefone ---------- */
+.telefone-wrap{ display:flex; justify-content:center; }
+.telefone{
+  position:relative;
+  isolation:isolate;
+  width:100%; max-width:400px;
+  background:var(--bg);
+  border-radius:32px;
+  border:1px solid var(--border);
+  box-shadow: var(--shadow);
+  overflow:hidden;
+  min-height:700px;
+  display:flex; flex-direction:column;
+}
+/* Mesma textura de ferramentas do fundo da página, só que numa escala menor
+   e mais visível, para dar personalidade à "tela" do telefone. Fica atrás
+   de tudo (z-index negativo) — os cartões brancos/escuros ficam por cima. */
+.telefone::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+  background-color:var(--accent);
+  opacity:var(--pattern-opacity);
+  -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cpolygon points='55.6,49 40,58 24.4,49 24.4,31 40,22 55.6,31' fill='none' stroke='black' stroke-width='2.5'/%3E%3Ccircle cx='40' cy='40' r='5' fill='black'/%3E%3Ccircle cx='150' cy='50' r='22' fill='none' stroke='black' stroke-width='2.5'/%3E%3Cline x1='150' y1='50' x2='164' y2='38' stroke='black' stroke-width='2.5' stroke-linecap='round'/%3E%3Cline x1='150' y1='30' x2='150' y2='34' stroke='black' stroke-width='2.5'/%3E%3Cline x1='172' y1='50' x2='168' y2='50' stroke='black' stroke-width='2.5'/%3E%3Cline x1='150' y1='70' x2='150' y2='66' stroke='black' stroke-width='2.5'/%3E%3Cline x1='128' y1='50' x2='132' y2='50' stroke='black' stroke-width='2.5'/%3E%3Crect x='30' y='140' width='30' height='24' rx='4' fill='none' stroke='black' stroke-width='2.5'/%3E%3Cline x1='38' y1='140' x2='38' y2='130' stroke='black' stroke-width='2.5' stroke-linecap='round'/%3E%3Cline x1='52' y1='140' x2='52' y2='130' stroke='black' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M45 164 q0 14 14 14' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round'/%3E%3Cg transform='rotate(-18 150 155)'%3E%3Crect x='120' y='146' width='60' height='18' rx='3' fill='none' stroke='black' stroke-width='2.5'/%3E%3Cline x1='132' y1='146' x2='132' y2='154' stroke='black' stroke-width='2'/%3E%3Cline x1='144' y1='146' x2='144' y2='158' stroke='black' stroke-width='2'/%3E%3Cline x1='156' y1='146' x2='156' y2='154' stroke='black' stroke-width='2'/%3E%3Cline x1='168' y1='146' x2='168' y2='158' stroke='black' stroke-width='2'/%3E%3C/g%3E%3C/svg%3E");
+  mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cpolygon points='55.6,49 40,58 24.4,49 24.4,31 40,22 55.6,31' fill='none' stroke='black' stroke-width='2.5'/%3E%3Ccircle cx='40' cy='40' r='5' fill='black'/%3E%3Ccircle cx='150' cy='50' r='22' fill='none' stroke='black' stroke-width='2.5'/%3E%3Cline x1='150' y1='50' x2='164' y2='38' stroke='black' stroke-width='2.5' stroke-linecap='round'/%3E%3Cline x1='150' y1='30' x2='150' y2='34' stroke='black' stroke-width='2.5'/%3E%3Cline x1='172' y1='50' x2='168' y2='50' stroke='black' stroke-width='2.5'/%3E%3Cline x1='150' y1='70' x2='150' y2='66' stroke='black' stroke-width='2.5'/%3E%3Cline x1='128' y1='50' x2='132' y2='50' stroke='black' stroke-width='2.5'/%3E%3Crect x='30' y='140' width='30' height='24' rx='4' fill='none' stroke='black' stroke-width='2.5'/%3E%3Cline x1='38' y1='140' x2='38' y2='130' stroke='black' stroke-width='2.5' stroke-linecap='round'/%3E%3Cline x1='52' y1='140' x2='52' y2='130' stroke='black' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M45 164 q0 14 14 14' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round'/%3E%3Cg transform='rotate(-18 150 155)'%3E%3Crect x='120' y='146' width='60' height='18' rx='3' fill='none' stroke='black' stroke-width='2.5'/%3E%3Cline x1='132' y1='146' x2='132' y2='154' stroke='black' stroke-width='2'/%3E%3Cline x1='144' y1='146' x2='144' y2='158' stroke='black' stroke-width='2'/%3E%3Cline x1='156' y1='146' x2='156' y2='154' stroke='black' stroke-width='2'/%3E%3Cline x1='168' y1='146' x2='168' y2='158' stroke='black' stroke-width='2'/%3E%3C/g%3E%3C/svg%3E");
+  -webkit-mask-repeat:repeat;
+  mask-repeat:repeat;
+  -webkit-mask-size:130px 130px;
+  mask-size:130px 130px;
+}
+.notch{
+  height:26px; display:flex; align-items:center; justify-content:center; background:var(--surface); flex:none;
+}
+.notch .pill{ width:70px; height:5px; border-radius:4px; background:var(--border); }
+
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 18px 14px;background:var(--surface);border-bottom:1px solid var(--border);
+  flex:none;
+}
+.logo{display:flex;align-items:center;gap:8px;font-weight:600;font-size:1.05rem;font-family:'Fraunces',serif;color:var(--accent-strong)}
+.logo .dot{width:9px;height:9px;border-radius:50%;background:var(--accent)}
+.sair-btn{background:none;border:1px solid var(--border);color:var(--text-muted);padding:6px 12px;border-radius:8px;font-size:.78rem;cursor:pointer;font-family:'Work Sans',sans-serif}
+.sair-btn:hover{background:var(--danger-soft);color:var(--danger);border-color:var(--danger)}
+.topbar-acoes{display:flex;align-items:center;gap:8px}
+.tema-btn{
+  width:30px;height:30px;padding:0;display:flex;align-items:center;justify-content:center;
+  background:none;border:1px solid var(--border);border-radius:50%;font-size:.92rem;cursor:pointer;line-height:1;
+}
+.tema-btn:hover{border-color:var(--accent);background:var(--accent-soft)}
+
+.tela{ flex:1; overflow-y:auto; padding:18px 16px 24px; }
+.tela.hidden{ display:none; }
+
+.cartao{
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-m);
+  box-shadow:var(--shadow); padding:18px 18px 20px;
+}
+
+.card-titulo{font-size:1.28rem;margin:2px 0 3px;color:var(--text);font-weight:600}
+.subtitulo{color:var(--text-muted);margin:0 0 18px;font-size:.86rem;line-height:1.5}
+
+label{display:block;font-size:.76rem;font-weight:600;margin:13px 0 5px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.03em}
+input,select,textarea{
+  width:100%;padding:10px 11px;border:1px solid var(--border);border-radius:var(--radius-s);
+  font-size:.92rem;background:var(--surface-2);color:var(--text);
+}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;background:var(--surface)}
+textarea{resize:vertical;min-height:64px;font-family:inherit}
+
+.tipo-toggle{display:flex;gap:8px;margin-top:6px}
+.tipo-toggle label.opcao{
+  flex:1;display:flex;align-items:center;justify-content:center;gap:6px;
+  border:1px solid var(--border);border-radius:var(--radius-s);padding:10px;cursor:pointer;
+  font-weight:600;font-size:.84rem;margin:0;color:var(--text-muted);text-transform:none;letter-spacing:0;
+}
+.tipo-toggle input{width:auto;margin:0}
+.tipo-toggle label.opcao.ativo{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-strong)}
+
+button.principal{
+  width:100%;margin-top:18px;padding:12px;border:none;border-radius:var(--radius-s);
+  background:var(--accent);color:#fff;font-size:.92rem;font-weight:600;cursor:pointer;
+  font-family:'Work Sans',sans-serif;
+}
+button.principal:hover{background:var(--accent-strong)}
+button.principal:focus-visible, .sair-btn:focus-visible, .tema-btn:focus-visible, button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+
+.troca{text-align:center;margin-top:16px;font-size:.84rem;color:var(--text-muted)}
+.troca a{color:var(--accent);font-weight:600;cursor:pointer;text-decoration:none}
+
+.msg-erro{background:var(--danger-soft);color:var(--danger);border:1px solid color-mix(in srgb, var(--danger) 35%, transparent);padding:9px 11px;border-radius:var(--radius-s);font-size:.82rem;margin-top:13px;display:none;line-height:1.45}
+.msg-ok{background:var(--accent-soft);color:var(--accent-strong);border:1px solid color-mix(in srgb, var(--accent) 35%, transparent);padding:9px 11px;border-radius:var(--radius-s);font-size:.82rem;margin-top:13px;display:none}
+
+.menu{display:grid;gap:10px;margin-top:16px}
+.menu-item{
+  display:flex;align-items:center;gap:13px;background:var(--surface-2);border:1px solid var(--border);
+  border-radius:var(--radius-m);padding:14px;cursor:pointer;
+}
+.menu-item:hover{border-color:var(--accent)}
+.menu-item .icone{font-size:1.25rem}
+.menu-item .rotulo{font-weight:600;font-size:.9rem}
+.menu-item .desc{font-size:.78rem;color:var(--text-muted);margin-top:1px}
+
+.saudacao{margin:4px 0 2px;color:var(--text-muted);font-size:.88rem}
+.saudacao b{color:var(--text);font-family:'Fraunces',serif;font-weight:600}
+
+.resultado-card{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-m);padding:14px;margin-top:11px}
+.resultado-card .nome{font-weight:600;font-size:.96rem}
+.resultado-card .profissao-tag{display:inline-block;background:var(--accent-soft);color:var(--accent-strong);font-size:.72rem;font-weight:700;padding:2px 9px;border-radius:100px;margin-top:5px}
+.resultado-card .linha{font-size:.82rem;color:var(--text-muted);margin-top:6px}
+.resultado-card .valor{font-weight:600;color:var(--accent-strong)}
+.resultado-card a.tel{color:var(--accent-strong);font-weight:600;text-decoration:none}
+
+.vazio{text-align:center;color:var(--text-muted);padding:24px 10px;font-size:.86rem}
+
+.voltar{background:none;border:none;color:var(--text-muted);font-size:.82rem;cursor:pointer;padding:0;margin-bottom:12px;display:inline-flex;align-items:center;gap:4px;font-family:'Work Sans',sans-serif}
+.voltar:hover{color:var(--accent-strong)}
+
+.perfil-linha{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);font-size:.86rem;gap:10px}
+.perfil-linha:last-child{border-bottom:none}
+.perfil-linha .rot{color:var(--text-muted)}
+.perfil-linha .val{font-weight:600;text-align:right}
+
+.hidden{display:none !important}
+::selection{ background: var(--accent-soft); }
+</style>
+
+<script>
+// Aplica o tema escolhido pelo usuário (se houver) antes da página desenhar,
+// pra não "piscar" no tema padrão do sistema por uma fração de segundo.
+(function(){
+  try{
+    const salvo = localStorage.getItem("fazai-tema");
+    if (salvo === "light" || salvo === "dark") document.documentElement.setAttribute("data-theme", salvo);
+  }catch(e){}
+})();
+</script>
+
+<div class="stage">
+
+  <!-- ===================== COLUNA ESQUERDA ===================== -->
+  <div class="intro">
+    <span class="eyebrow"><span class="pt"></span> Demonstração interativa</span>
+    <h1>Faz Ai, <em>testável</em> aqui mesmo.</h1>
+    <p class="lede">Esta página roda o front-end real do site inteiro no seu navegador — cadastro, login, busca por profissão e cidade — com os dados guardados localmente só para esta prévia.</p>
+
+    <div class="stack-lista">
+      <div class="stack-item">
+        <div class="marca">C++</div>
+        <div class="txt"><b>Regras de negócio</b><span>Validação de e-mail, CPF, telefone, data e valor — portadas do faz_ai_1.cpp original</span></div>
+      </div>
+      <div class="stack-item">
+        <div class="marca">PG</div>
+        <div class="txt"><b>PostgreSQL</b><span>No pacote entregue, substitui os arquivos usuarios.txt / profissionais.txt</span></div>
+      </div>
+      <div class="stack-item">
+        <div class="marca">📱</div>
+        <div class="txt"><b>Caminho para o APK</b><span>PWA já embutido → PWABuilder gera o Android a partir da URL pública</span></div>
+      </div>
+    </div>
+
+    <div class="credenciais">
+      <div style="margin-bottom:4px;color:var(--text);font-weight:600;font-size:.82rem">Já tem uma conta pré-carregada:</div>
+      <div class="linha"><span>e-mail</span><b>albertobatista@gmail.com</b></div>
+      <div class="linha"><span>senha</span><b>beto995906</b></div>
+      <div class="linha"><span>conta</span><b>profissional · Mecânico · Recife</b></div>
+    </div>
+
+    <div class="aviso">
+      <b>Sobre esta prévia:</b> aqui a lógica roda em JavaScript e os dados ficam só no seu navegador (não é o mesmo banco). O pacote que você recebeu contém o site de verdade — servidor em C++ conectado a um PostgreSQL real, já testado ponta a ponta.
+    </div>
+  </div>
+
+  <!-- ===================== COLUNA DIREITA: TELEFONE ===================== -->
+  <div class="telefone-wrap">
+    <div class="telefone">
+      <div class="notch"><div class="pill"></div></div>
+
+      <div class="topbar">
+        <div class="logo"><span class="dot"></span> Faz Ai</div>
+        <div class="topbar-acoes">
+          <button class="tema-btn" id="btnTema" type="button" title="Alternar tema claro/escuro" aria-label="Alternar tema claro/escuro">🌙</button>
+          <button class="sair-btn hidden" id="btnSair">Sair</button>
+        </div>
+      </div>
+
+      <!-- TELA: AUTH -->
+      <div id="telaAuth" class="tela">
+       <div class="cartao">
+        <h2 class="card-titulo" id="authTitulo">Entrar</h2>
+        <p class="subtitulo" id="authSubtitulo">Encontre ou ofereça serviços na sua cidade.</p>
+
+        <form id="formLogin">
+          <label for="loginEmail">E-mail</label>
+          <input type="email" id="loginEmail" placeholder="voce@exemplo.com" required>
+          <label for="loginSenha">Senha</label>
+          <input type="password" id="loginSenha" placeholder="Sua senha" required>
+          <button type="submit" class="principal">Entrar</button>
+          <div class="msg-erro" id="loginErro"></div>
+        </form>
+
+        <form id="formCadastro" class="hidden">
+          <label>Tipo de conta</label>
+          <div class="tipo-toggle">
+            <label class="opcao ativo" data-tipo="cliente"><input type="radio" name="tipoConta" value="cliente" checked> Cliente</label>
+            <label class="opcao" data-tipo="profissional"><input type="radio" name="tipoConta" value="profissional"> Profissional</label>
+          </div>
+
+          <label for="cadNome">Nome completo</label>
+          <input type="text" id="cadNome" required>
+          <label for="cadEmail">E-mail</label>
+          <input type="email" id="cadEmail" required>
+          <label for="cadSenha">Senha (mín. 4 caracteres)</label>
+          <input type="password" id="cadSenha" minlength="4" required>
+
+          <div id="blocoProfissional" class="hidden">
+            <label for="cadCpf">CPF</label>
+            <input type="text" id="cadCpf" placeholder="000.000.000-00">
+            <label for="cadNascimento">Data de nascimento</label>
+            <input type="text" id="cadNascimento" placeholder="DD/MM/AAAA">
+            <label for="cadProfissao">Profissão</label>
+            <select id="cadProfissao"></select>
+            <label for="cadDescricao">Descreva seu serviço</label>
+            <textarea id="cadDescricao"></textarea>
+            <label for="cadCidade">Cidade onde trabalha</label>
+            <input type="text" id="cadCidade">
+            <label for="cadTelefone">Telefone</label>
+            <input type="text" id="cadTelefone" placeholder="(81) 99999-9999">
+            <label for="cadValor">Valor do serviço (R$)</label>
+            <input type="text" id="cadValor" placeholder="300,00">
+          </div>
+
+          <button type="submit" class="principal">Criar conta</button>
+          <div class="msg-erro" id="cadastroErro"></div>
+        </form>
+
+        <div class="troca">
+          <span id="trocaTextoLogin">Ainda não tem conta? <a id="linkIrCadastro">Criar conta</a></span>
+          <span id="trocaTextoCadastro" class="hidden">Já tem conta? <a id="linkIrLogin">Entrar</a></span>
+        </div>
+       </div>
+      </div>
+
+      <!-- TELA: MENU -->
+      <div id="telaMenu" class="tela hidden">
+       <div class="cartao">
+        <p class="saudacao">Olá, <b id="menuNome"></b>!</p>
+        <div class="menu">
+          <div class="menu-item" data-acao="buscar">
+            <div class="icone">🔎</div>
+            <div><div class="rotulo">Procurar um serviço</div><div class="desc">Encontre profissionais na sua cidade</div></div>
+          </div>
+          <div class="menu-item hidden" id="itemOferecer" data-acao="oferecer">
+            <div class="icone">🛠️</div>
+            <div><div class="rotulo">Oferecer meus serviços</div><div class="desc">Cadastre ou atualize seu perfil profissional</div></div>
+          </div>
+          <div class="menu-item" data-acao="perfil">
+            <div class="icone">👤</div>
+            <div><div class="rotulo">Meu perfil</div><div class="desc">Veja seus dados de conta</div></div>
+          </div>
+        </div>
+       </div>
+      </div>
+
+      <!-- TELA: BUSCAR -->
+      <div id="telaBuscar" class="tela hidden">
+        <button class="voltar" data-voltar="menu">← Voltar</button>
+        <div class="cartao">
+        <h2 class="card-titulo">Procurar serviço</h2>
+        <p class="subtitulo">Escolha a profissão e a cidade.</p>
+        <label for="buscaProfissao">Profissão</label>
+        <select id="buscaProfissao"></select>
+        <label for="buscaCidade">Cidade</label>
+        <input type="text" id="buscaCidade" placeholder="Ex: Recife">
+        <button class="principal" id="btnBuscar">Buscar</button>
+        <div id="resultados"></div>
+        </div>
+      </div>
+
+      <!-- TELA: OFERECER -->
+      <div id="telaOferecer" class="tela hidden">
+        <button class="voltar" data-voltar="menu">← Voltar</button>
+        <div class="cartao">
+        <h2 class="card-titulo">Oferecer meus serviços</h2>
+        <p class="subtitulo">Preencha seus dados profissionais.</p>
+        <form id="formOferecer">
+          <label for="ofCpf">CPF</label>
+          <input type="text" id="ofCpf" placeholder="000.000.000-00">
+          <label for="ofNascimento">Data de nascimento</label>
+          <input type="text" id="ofNascimento" placeholder="DD/MM/AAAA">
+          <label for="ofProfissao">Profissão</label>
+          <select id="ofProfissao"></select>
+          <label for="ofDescricao">Descreva seu serviço</label>
+          <textarea id="ofDescricao"></textarea>
+          <label for="ofCidade">Cidade onde trabalha</label>
+          <input type="text" id="ofCidade">
+          <label for="ofTelefone">Telefone</label>
+          <input type="text" id="ofTelefone" placeholder="(81) 99999-9999">
+          <label for="ofValor">Valor do serviço (R$)</label>
+          <input type="text" id="ofValor" placeholder="300,00">
+          <button type="submit" class="principal">Salvar</button>
+          <div class="msg-erro" id="oferecerErro"></div>
+          <div class="msg-ok" id="oferecerOk"></div>
+        </form>
+        </div>
+      </div>
+
+      <!-- TELA: PERFIL -->
+      <div id="telaPerfil" class="tela hidden">
+        <button class="voltar" data-voltar="menu">← Voltar</button>
+        <div id="perfilCard" class="cartao"><h2 class="card-titulo">Meu perfil</h2></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// Faz Ai — DEMO client-side (mesma lógica do server.cpp/regras.hpp,
+// portada para JS só para esta prévia. Os dados ficam em localStorage,
+// isolados por navegador — não é o banco PostgreSQL real do projeto.)
+// ============================================================
+
+const PROFISSOES = [
+  "Eletricista","Encanador","Pedreiro","Pintor","Carpinteiro","Marceneiro","Serralheiro",
+  "Azulejista","Gesseiro","Jardineiro","Diarista","Faxineiro","Cozinheiro","Confeiteiro",
+  "Garcom","Fotografo","Videomaker","Designer Grafico","Desenvolvedor de Software",
+  "Tecnico de Informatica","Tecnico de Celular","Tecnico de Computadores",
+  "Instalador de Ar-Condicionado","Tecnico de Refrigeracao","Mecanico","Eletricista Automotivo",
+  "Lavador de Carros","Funileiro","Motoboy","Motorista","Professor Particular","Tradutor",
+  "Redator","Social Media","Cabeleireiro","Barbeiro","Manicure","Maquiador",
+  "Fotografo de Eventos","Personal Trainer","Professor de Musica","Professor de Idiomas",
+  "Costureiro","Decorador","Cerimonialista","Cuidador de Idosos","Baba","Pet Sitter",
+  "Adestrador de Caes","Tecnico de Seguranca Eletronica"
+];
+
+function apenasDigitos(t){ return (t||"").replace(/\D/g, ""); }
+function paraMinusculo(t){ return (t||"").toLowerCase(); }
+
+function emailValido(email){
+  const arroba = email.indexOf("@");
+  if (arroba <= 0) return false;
+  if (email.indexOf("@", arroba+1) !== -1) return false;
+  const ponto = email.indexOf(".", arroba);
+  if (ponto === -1 || ponto <= arroba+1 || ponto === email.length-1) return false;
+  return true;
+}
+function telefoneValido(tel){
+  if (!/^[\d\s()\-]+$/.test(tel)) return false;
+  const d = apenasDigitos(tel);
+  return d.length === 10 || d.length === 11;
+}
+function cpfValido(cpfDigitado){
+  if (!/^[\d.\-]+$/.test(cpfDigitado)) return false;
+  const cpf = apenasDigitos(cpfDigitado);
+  if (cpf.length !== 11) return false;
+  if (/^(\d)\1{10}$/.test(cpf)) return false;
+  const d = cpf.split("").map(Number);
+  let soma = 0;
+  for (let i=0;i<9;i++) soma += d[i]*(10-i);
+  let d1 = (soma%11<2)?0:11-(soma%11);
+  if (d1 !== d[9]) return false;
+  soma = 0;
+  for (let i=0;i<10;i++) soma += d[i]*(11-i);
+  let d2 = (soma%11<2)?0:11-(soma%11);
+  if (d2 !== d[10]) return false;
+  return true;
+}
+function anoBissexto(a){ return (a%4===0 && a%100!==0) || a%400===0; }
+function dataValida(data){
+  if (!/^\d{2}\/\d{2}\/\d{4}$/.test(data)) return false;
+  const dia = +data.slice(0,2), mes = +data.slice(3,5), ano = +data.slice(6,10);
+  if (ano < 1900 || ano > 2026 || mes < 1 || mes > 12) return false;
+  const dias = [31,28,31,30,31,30,31,31,30,31,30,31];
+  let limite = dias[mes-1];
+  if (mes === 2 && anoBissexto(ano)) limite = 29;
+  return dia >= 1 && dia <= limite;
+}
+function valorValido(v){
+  if (!v) return false;
+  let temNumero = false, sep = 0;
+  for (const c of v){
+    if (/\d/.test(c)) temNumero = true;
+    else if (c==="."||c===",") sep++;
+    else return false;
+  }
+  return temNumero && sep <= 1;
+}
+function valorParaNumero(v){ return parseFloat(String(v).replace(",", ".")) || 0; }
+
+async function hashSenha(senha){
+  const enc = new TextEncoder().encode(senha + "faz_ai_salt_2026");
+  const buf = await crypto.subtle.digest("SHA-256", enc);
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,"0")).join("");
+}
+
+// ---------- "banco" em localStorage ----------
+const DB_KEY = "fazai_demo_db_v1";
+function dbLer(){
+  try {
+    const raw = localStorage.getItem(DB_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e){}
+  return null;
+}
+function dbGravar(db){ try{ localStorage.setItem(DB_KEY, JSON.stringify(db)); }catch(e){} }
+
+async function dbSeed(){
+  const hash = await hashSenha("beto995906");
+  return {
+    usuarios: [
+      { id:1, nome:"alberto", email:"albertobatista@gmail.com", senha_hash:hash, tipo:"profissional" },
+      { id:2, nome:"alberto da silva", email:"albertobatista88@gmail.com", senha_hash:hash, tipo:"cliente" }
+    ],
+    profissionais: [
+      { usuario_id:1, nome:"alberto da silva batista", cpf:"09807476437", data_nascimento:"07/08/1994",
+        profissao:"Mecanico", descricao:"Serviço de mecânica em geral", cidade:"recife", telefone:"81995248740", valor:300.00 }
+    ],
+    nextId: 3
+  };
+}
+
+let DB = null;
+async function dbInit(){
+  DB = dbLer();
+  if (!DB) { DB = await dbSeed(); dbGravar(DB); }
+}
+
+// ---------- estado ----------
+const estado = { usuario: null };
+function $(s){ return document.querySelector(s); }
+function $all(s){ return document.querySelectorAll(s); }
+
+function mostrarTela(id){
+  $all(".tela").forEach(el => el.classList.add("hidden"));
+  $("#"+id).classList.remove("hidden");
+  $("#btnSair").classList.toggle("hidden", !estado.usuario);
+}
+function mostrarErro(id,msg){ const el=$("#"+id); el.textContent=msg; el.style.display="block"; }
+function esconderErro(id){ $("#"+id).style.display="none"; }
+function mostrarOk(id,msg){ const el=$("#"+id); el.textContent=msg; el.style.display="block"; }
+
+function preencherProfissoes(){
+  const html = '<option value="">Selecione...</option>' + PROFISSOES.map(p=>`<option value="${p}">${p}</option>`).join("");
+  ["#cadProfissao","#buscaProfissao","#ofProfissao"].forEach(sel=>{ const el=$(sel); if (el) el.innerHTML = html; });
+}
+
+// ---------- navegação login/cadastro ----------
+$("#linkIrCadastro").addEventListener("click", ()=>{
+  $("#formLogin").classList.add("hidden");
+  $("#formCadastro").classList.remove("hidden");
+  $("#trocaTextoLogin").classList.add("hidden");
+  $("#trocaTextoCadastro").classList.remove("hidden");
+  $("#authTitulo").textContent = "Criar conta";
+  $("#authSubtitulo").textContent = "Cadastre-se como cliente ou profissional.";
+});
+$("#linkIrLogin").addEventListener("click", ()=>{
+  $("#formCadastro").classList.add("hidden");
+  $("#formLogin").classList.remove("hidden");
+  $("#trocaTextoCadastro").classList.add("hidden");
+  $("#trocaTextoLogin").classList.remove("hidden");
+  $("#authTitulo").textContent = "Entrar";
+  $("#authSubtitulo").textContent = "Encontre ou ofereça serviços na sua cidade.";
+});
+$all('input[name="tipoConta"]').forEach(r=>{
+  r.addEventListener("change", ()=>{
+    $all(".tipo-toggle .opcao").forEach(l=>l.classList.remove("ativo"));
+    r.closest(".opcao").classList.add("ativo");
+    $("#blocoProfissional").classList.toggle("hidden", r.value !== "profissional");
+  });
+});
+
+// ---------- login ----------
+$("#formLogin").addEventListener("submit", async (e)=>{
+  e.preventDefault();
+  esconderErro("loginErro");
+  const email = paraMinusculo($("#loginEmail").value.trim());
+  const senha = $("#loginSenha").value;
+  const hash = await hashSenha(senha);
+  const u = DB.usuarios.find(u => paraMinusculo(u.email) === email && u.senha_hash === hash);
+  if (!u){ mostrarErro("loginErro", "E-mail ou senha incorretos."); return; }
+  estado.usuario = { id:u.id, nome:u.nome, email:u.email, tipo:u.tipo };
+  entrarNoMenu();
+});
+
+// ---------- cadastro ----------
+$("#formCadastro").addEventListener("submit", async (e)=>{
+  e.preventDefault();
+  esconderErro("cadastroErro");
+  const tipo = $('input[name="tipoConta"]:checked').value;
+  const nome = $("#cadNome").value.trim();
+  const email = $("#cadEmail").value.trim();
+  const senha = $("#cadSenha").value;
+
+  if (!nome){ mostrarErro("cadastroErro","O nome não pode ficar vazio."); return; }
+  if (!emailValido(email)){ mostrarErro("cadastroErro","E-mail inválido."); return; }
+  if (senha.length < 4){ mostrarErro("cadastroErro","Senha muito curta (mínimo 4 caracteres)."); return; }
+  if (DB.usuarios.some(u => paraMinusculo(u.email) === paraMinusculo(email))){
+    mostrarErro("cadastroErro","Este e-mail já está cadastrado."); return;
+  }
+
+  let dadosProfissional = null;
+  if (tipo === "profissional"){
+    const cpf = $("#cadCpf").value.trim();
+    const dataNasc = $("#cadNascimento").value.trim();
+    const profissao = $("#cadProfissao").value;
+    const descricao = $("#cadDescricao").value.trim();
+    const cidade = $("#cadCidade").value.trim();
+    const telefone = $("#cadTelefone").value.trim();
+    const valorTxt = $("#cadValor").value.trim();
+
+    if (!cpfValido(cpf)){ mostrarErro("cadastroErro","CPF inválido."); return; }
+    if (!dataValida(dataNasc)){ mostrarErro("cadastroErro","Data de nascimento inválida."); return; }
+    if (!PROFISSOES.includes(profissao)){ mostrarErro("cadastroErro","Profissão inválida."); return; }
+    if (!descricao){ mostrarErro("cadastroErro","A descrição não pode ficar vazia."); return; }
+    if (!cidade){ mostrarErro("cadastroErro","A cidade não pode ficar vazia."); return; }
+    if (!telefoneValido(telefone)){ mostrarErro("cadastroErro","Telefone inválido. Digite 10 ou 11 números."); return; }
+    if (!valorValido(valorTxt)){ mostrarErro("cadastroErro","Valor do serviço inválido."); return; }
+
+    const cpfDigitos = apenasDigitos(cpf);
+    if (DB.profissionais.some(p => p.cpf === cpfDigitos)){
+      mostrarErro("cadastroErro","Este CPF já está cadastrado."); return;
+    }
+    dadosProfissional = { nome, cpf:cpfDigitos, data_nascimento:dataNasc, profissao, descricao, cidade, telefone, valor:valorParaNumero(valorTxt) };
+  }
+
+  const hash = await hashSenha(senha);
+  const novoId = DB.nextId++;
+  DB.usuarios.push({ id:novoId, nome, email, senha_hash:hash, tipo });
+  if (dadosProfissional) DB.profissionais.push({ usuario_id:novoId, ...dadosProfissional });
+  dbGravar(DB);
+
+  estado.usuario = { id:novoId, nome, email, tipo };
+  entrarNoMenu();
+});
+
+function entrarNoMenu(){
+  $("#menuNome").textContent = estado.usuario.nome;
+  $("#itemOferecer").classList.toggle("hidden", estado.usuario.tipo !== "profissional");
+  mostrarTela("telaMenu");
+}
+
+$all(".menu-item").forEach(item=>{
+  item.addEventListener("click", ()=>{
+    const acao = item.dataset.acao;
+    if (acao === "buscar") mostrarTela("telaBuscar");
+    else if (acao === "oferecer") abrirOferecer();
+    else if (acao === "perfil") abrirPerfil();
+  });
+});
+$all("[data-voltar]").forEach(btn => btn.addEventListener("click", ()=>mostrarTela("telaMenu")));
+
+// ---------- tema claro/escuro escolhido pelo usuário ----------
+function temaAtual(){
+  const escolhido = document.documentElement.getAttribute("data-theme");
+  if (escolhido === "light" || escolhido === "dark") return escolhido;
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+function atualizarIconeTema(){
+  $("#btnTema").textContent = temaAtual() === "dark" ? "☀️" : "🌙";
+}
+atualizarIconeTema();
+$("#btnTema").addEventListener("click", () => {
+  const novoTema = temaAtual() === "dark" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", novoTema);
+  try{ localStorage.setItem("fazai-tema", novoTema); }catch(e){}
+  atualizarIconeTema();
+});
+
+$("#btnSair").addEventListener("click", ()=>{
+  estado.usuario = null;
+  $("#formCadastro").classList.add("hidden");
+  $("#formLogin").classList.remove("hidden");
+  $("#loginEmail").value = "";
+  $("#loginSenha").value = "";
+  mostrarTela("telaAuth");
+});
+
+// ---------- buscar ----------
+$("#btnBuscar").addEventListener("click", ()=>{
+  const profissao = $("#buscaProfissao").value;
+  const cidade = $("#buscaCidade").value.trim();
+  const el = $("#resultados");
+  if (!profissao || !cidade){ el.innerHTML = '<div class="vazio">Escolha a profissão e digite a cidade.</div>'; return; }
+  const resultados = DB.profissionais.filter(p => p.profissao === profissao && paraMinusculo(p.cidade) === paraMinusculo(cidade));
+  if (resultados.length === 0){ el.innerHTML = `<div class="vazio">Nenhum profissional de ${profissao} encontrado em ${cidade}.</div>`; return; }
+  el.innerHTML = resultados.map(p => `
+    <div class="resultado-card">
+      <div class="nome">${p.nome}</div>
+      <div class="profissao-tag">${p.profissao}</div>
+      <div class="linha">${p.descricao}</div>
+      <div class="linha">📍 ${p.cidade} &nbsp;·&nbsp; <a class="tel num" href="tel:${p.telefone}">${p.telefone}</a></div>
+      <div class="linha">Valor: <span class="valor num">R$ ${Number(p.valor).toFixed(2).replace(".", ",")}</span></div>
+    </div>
+  `).join("");
+});
+
+// ---------- oferecer ----------
+function abrirOferecer(){
+  esconderErro("oferecerErro");
+  $("#oferecerOk").style.display = "none";
+  const p = DB.profissionais.find(p => p.usuario_id === estado.usuario.id);
+  if (p){
+    $("#ofCpf").value = p.cpf;
+    $("#ofNascimento").value = p.data_nascimento;
+    $("#ofProfissao").value = p.profissao;
+    $("#ofDescricao").value = p.descricao;
+    $("#ofCidade").value = p.cidade;
+    $("#ofTelefone").value = p.telefone;
+    $("#ofValor").value = String(p.valor).replace(".", ",");
+  } else {
+    $("#formOferecer").reset();
+  }
+  mostrarTela("telaOferecer");
+}
+
+$("#formOferecer").addEventListener("submit", (e)=>{
+  e.preventDefault();
+  esconderErro("oferecerErro");
+  $("#oferecerOk").style.display = "none";
+
+  const cpf = $("#ofCpf").value.trim();
+  const dataNasc = $("#ofNascimento").value.trim();
+  const profissao = $("#ofProfissao").value;
+  const descricao = $("#ofDescricao").value.trim();
+  const cidade = $("#ofCidade").value.trim();
+  const telefone = $("#ofTelefone").value.trim();
+  const valorTxt = $("#ofValor").value.trim();
+
+  if (!cpfValido(cpf)){ mostrarErro("oferecerErro","CPF inválido."); return; }
+  if (!dataValida(dataNasc)){ mostrarErro("oferecerErro","Data de nascimento inválida."); return; }
+  if (!PROFISSOES.includes(profissao)){ mostrarErro("oferecerErro","Profissão inválida."); return; }
+  if (!descricao){ mostrarErro("oferecerErro","A descrição não pode ficar vazia."); return; }
+  if (!cidade){ mostrarErro("oferecerErro","A cidade não pode ficar vazia."); return; }
+  if (!telefoneValido(telefone)){ mostrarErro("oferecerErro","Telefone inválido. Digite 10 ou 11 números."); return; }
+  if (!valorValido(valorTxt)){ mostrarErro("oferecerErro","Valor do serviço inválido."); return; }
+
+  const cpfDigitos = apenasDigitos(cpf);
+  if (DB.profissionais.some(p => p.cpf === cpfDigitos && p.usuario_id !== estado.usuario.id)){
+    mostrarErro("oferecerErro","Este CPF já está cadastrado para outra conta."); return;
+  }
+
+  const existente = DB.profissionais.find(p => p.usuario_id === estado.usuario.id);
+  const registro = { usuario_id: estado.usuario.id, nome: estado.usuario.nome, cpf: cpfDigitos,
+    data_nascimento: dataNasc, profissao, descricao, cidade, telefone, valor: valorParaNumero(valorTxt) };
+  if (existente) Object.assign(existente, registro);
+  else DB.profissionais.push(registro);
+  dbGravar(DB);
+
+  mostrarOk("oferecerOk", "Dados salvos com sucesso!");
+});
+
+// ---------- perfil ----------
+function abrirPerfil(){
+  const u = estado.usuario;
+  const p = DB.profissionais.find(p => p.usuario_id === u.id);
+  let html = `<h2 class="card-titulo">Meu perfil</h2>
+    <div class="perfil-linha"><span class="rot">Nome</span><span class="val">${u.nome}</span></div>
+    <div class="perfil-linha"><span class="rot">E-mail</span><span class="val">${u.email}</span></div>
+    <div class="perfil-linha"><span class="rot">Tipo de conta</span><span class="val">${u.tipo === "profissional" ? "Profissional" : "Cliente"}</span></div>`;
+  if (p){
+    html += `
+    <div class="perfil-linha"><span class="rot">Profissão</span><span class="val">${p.profissao}</span></div>
+    <div class="perfil-linha"><span class="rot">Cidade</span><span class="val">${p.cidade}</span></div>
+    <div class="perfil-linha"><span class="rot">Telefone</span><span class="val num">${p.telefone}</span></div>
+    <div class="perfil-linha"><span class="rot">Valor</span><span class="val num">R$ ${Number(p.valor).toFixed(2).replace(".", ",")}</span></div>`;
+  }
+  $("#perfilCard").innerHTML = html;
+  mostrarTela("telaPerfil");
+}
+
+// ---------- inicialização ----------
+(async function iniciar(){
+  preencherProfissoes();
+  await dbInit();
+  mostrarTela("telaAuth");
+})();
+</script>

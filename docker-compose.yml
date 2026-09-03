@@ -1,0 +1,33 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: fazai
+      POSTGRES_PASSWORD: fazai_dev_pw
+      POSTGRES_DB: fazai_db
+    volumes:
+      - fazai_db_data:/var/lib/postgresql/data
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fazai -d fazai_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PORT: 8080
+      DATABASE_URL: "dbname=fazai_db user=fazai password=fazai_dev_pw host=db port=5432"
+    ports:
+      - "8080:8080"
+
+volumes:
+  fazai_db_data:

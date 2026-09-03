@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Faz Ai</title>
+<meta name="theme-color" content="#1f7a4d">
+<link rel="manifest" href="/manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="/styles.css">
+<script>
+// Aplica o tema escolhido pelo usuário (se houver) antes da página desenhar,
+// pra não "piscar" no tema padrão do sistema por uma fração de segundo.
+(function(){
+  try{
+    var salvo = localStorage.getItem("fazai-tema");
+    if (salvo === "light" || salvo === "dark") document.documentElement.setAttribute("data-theme", salvo);
+  }catch(e){}
+})();
+</script>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo"><span class="dot"></span> Faz Ai</div>
+  <div class="topbar-acoes">
+    <button class="tema-btn" id="btnTema" type="button" title="Alternar tema claro/escuro" aria-label="Alternar tema claro/escuro">🌙</button>
+    <button class="sair-btn hidden" id="btnSair">Sair</button>
+  </div>
+</div>
+
+<!-- ===== TELA: BOAS-VINDAS / LOGIN / CADASTRO ===== -->
+<div id="telaAuth" class="container">
+  <div class="card">
+    <h1 class="titulo" id="authTitulo">Entrar</h1>
+    <p class="subtitulo" id="authSubtitulo">Encontre ou ofereça serviços na sua cidade.</p>
+
+    <!-- LOGIN -->
+    <form id="formLogin">
+      <label for="loginEmail">E-mail</label>
+      <input type="email" id="loginEmail" placeholder="voce@exemplo.com" required>
+      <label for="loginSenha">Senha</label>
+      <input type="password" id="loginSenha" placeholder="Sua senha" required>
+      <button type="submit" class="principal">Entrar</button>
+      <div class="msg-erro" id="loginErro"></div>
+    </form>
+
+    <!-- CADASTRO -->
+    <form id="formCadastro" class="hidden">
+      <label>Tipo de conta</label>
+      <div class="tipo-toggle">
+        <label class="opcao ativo" data-tipo="cliente">
+          <input type="radio" name="tipoConta" value="cliente" checked> Cliente
+        </label>
+        <label class="opcao" data-tipo="profissional">
+          <input type="radio" name="tipoConta" value="profissional"> Profissional
+        </label>
+      </div>
+
+      <label for="cadNome">Nome completo</label>
+      <input type="text" id="cadNome" required>
+
+      <label for="cadEmail">E-mail</label>
+      <input type="email" id="cadEmail" required>
+
+      <label for="cadSenha">Senha (mín. 4 caracteres)</label>
+      <input type="password" id="cadSenha" minlength="4" required>
+
+      <div id="blocoProfissional" class="hidden">
+        <hr style="border:none;border-top:1px solid var(--borda);margin:18px 0">
+        <p class="subtitulo" style="margin-bottom:6px">Dados profissionais</p>
+
+        <label for="cadCpf">CPF</label>
+        <input type="text" id="cadCpf" placeholder="000.000.000-00">
+
+        <label for="cadNascimento">Data de nascimento</label>
+        <input type="text" id="cadNascimento" placeholder="DD/MM/AAAA">
+
+        <label for="cadProfissao">Profissão</label>
+        <select id="cadProfissao"></select>
+
+        <label for="cadDescricao">Descreva seu serviço</label>
+        <textarea id="cadDescricao"></textarea>
+
+        <label for="cadCidade">Cidade onde trabalha</label>
+        <input type="text" id="cadCidade">
+
+        <label for="cadTelefone">Telefone</label>
+        <input type="text" id="cadTelefone" placeholder="(81) 99999-9999">
+
+        <label for="cadValor">Valor do serviço (R$)</label>
+        <input type="text" id="cadValor" placeholder="300,00">
+      </div>
+
+      <button type="submit" class="principal">Criar conta</button>
+      <div class="msg-erro" id="cadastroErro"></div>
+    </form>
+
+    <div class="troca">
+      <span id="trocaTextoLogin">Ainda não tem conta? <a id="linkIrCadastro">Criar conta</a></span>
+      <span id="trocaTextoCadastro" class="hidden">Já tem conta? <a id="linkIrLogin">Entrar</a></span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TELA: MENU PRINCIPAL ===== -->
+<div id="telaMenu" class="container hidden">
+  <p class="saudacao">Olá, <b id="menuNome"></b>!</p>
+  <div class="menu">
+    <div class="menu-item" data-acao="buscar">
+      <div class="icone">🔎</div>
+      <div><div class="rotulo">Procurar um serviço</div><div class="desc">Encontre profissionais na sua cidade</div></div>
+    </div>
+    <div class="menu-item hidden" id="itemOferecer" data-acao="oferecer">
+      <div class="icone">🛠️</div>
+      <div><div class="rotulo">Oferecer meus serviços</div><div class="desc">Cadastre ou atualize seu perfil profissional</div></div>
+    </div>
+    <div class="menu-item" data-acao="perfil">
+      <div class="icone">👤</div>
+      <div><div class="rotulo">Meu perfil</div><div class="desc">Veja seus dados de conta</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TELA: BUSCAR SERVIÇO ===== -->
+<div id="telaBuscar" class="container hidden">
+  <button class="voltar" data-voltar="menu">← Voltar</button>
+  <div class="card">
+    <h1 class="titulo">Procurar serviço</h1>
+    <p class="subtitulo">Escolha a profissão e a cidade.</p>
+    <label for="buscaProfissao">Profissão</label>
+    <select id="buscaProfissao"></select>
+    <label for="buscaCidade">Cidade</label>
+    <input type="text" id="buscaCidade" placeholder="Ex: Recife">
+    <button class="principal" id="btnBuscar">Buscar</button>
+  </div>
+  <div id="resultados"></div>
+</div>
+
+<!-- ===== TELA: OFERECER SERVIÇOS ===== -->
+<div id="telaOferecer" class="container hidden">
+  <button class="voltar" data-voltar="menu">← Voltar</button>
+  <div class="card">
+    <h1 class="titulo">Oferecer meus serviços</h1>
+    <p class="subtitulo">Preencha seus dados profissionais.</p>
+    <form id="formOferecer">
+      <label for="ofCpf">CPF</label>
+      <input type="text" id="ofCpf" placeholder="000.000.000-00">
+      <label for="ofNascimento">Data de nascimento</label>
+      <input type="text" id="ofNascimento" placeholder="DD/MM/AAAA">
+      <label for="ofProfissao">Profissão</label>
+      <select id="ofProfissao"></select>
+      <label for="ofDescricao">Descreva seu serviço</label>
+      <textarea id="ofDescricao"></textarea>
+      <label for="ofCidade">Cidade onde trabalha</label>
+      <input type="text" id="ofCidade">
+      <label for="ofTelefone">Telefone</label>
+      <input type="text" id="ofTelefone" placeholder="(81) 99999-9999">
+      <label for="ofValor">Valor do serviço (R$)</label>
+      <input type="text" id="ofValor" placeholder="300,00">
+      <button type="submit" class="principal">Salvar</button>
+      <div class="msg-erro" id="oferecerErro"></div>
+      <div class="msg-ok" id="oferecerOk"></div>
+    </form>
+  </div>
+</div>
+
+<!-- ===== TELA: PERFIL ===== -->
+<div id="telaPerfil" class="container hidden">
+  <button class="voltar" data-voltar="menu">← Voltar</button>
+  <div class="card" id="perfilCard">
+    <h1 class="titulo">Meu perfil</h1>
+  </div>
+</div>
+
+<script src="/app.js"></script>
+</body>
+</html>
