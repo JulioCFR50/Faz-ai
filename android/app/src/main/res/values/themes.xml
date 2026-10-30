@@ -1,0 +1,12 @@
+<resources>
+    <!-- Verde do Faz Ai (mesmo theme_color do manifest.json do site) -->
+    <color name="verde_fazai">#1F7A4D</color>
+
+    <style name="Theme.FazAi" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:colorPrimary">@color/verde_fazai</item>
+        <item name="android:colorAccent">@color/verde_fazai</item>
+        <item name="android:statusBarColor">@color/verde_fazai</item>
+        <item name="android:navigationBarColor">@color/verde_fazai</item>
+        <item name="android:windowBackground">@color/verde_fazai</item>
+    </style>
+</resources>

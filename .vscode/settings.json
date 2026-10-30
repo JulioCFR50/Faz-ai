@@ -1,0 +1,16 @@
+{
+    "java.configuration.updateBuildConfiguration": "interactive",
+    // Os projetos Android (android/ e android-meu/) são compilados pelo Android Studio.
+    // A extensão de Java do VS Code tentava compilá-los com um Java sem jlink e dava erro,
+    // então a importação de projetos Gradle fica desligada neste workspace.
+    "java.import.gradle.enabled": false,
+    "java.import.exclusions": [
+        "**/node_modules/**",
+        "**/.metadata/**",
+        "**/archetype-resources/**",
+        "**/META-INF/maven/**",
+        "**/android/**",
+        "**/android-meu/**"
+    ],
+    "java.import.gradle.java.home": "C:\\Program Files\\Android\\Android Studio\\jbr"
+}
