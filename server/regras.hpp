@@ -5,6 +5,7 @@
 
 #include <string>
 #include <vector>
+#include <utility>
 #include <sstream>
 #include <cctype>
 #include <openssl/evp.h>
@@ -29,6 +30,36 @@ inline const std::vector<std::string>& profissoes()
         "Baba", "Pet Sitter", "Adestrador de Caes", "Tecnico de Seguranca Eletronica"
     };
     return PROFISSOES;
+}
+
+// Unidades da federação: {sigla, nome}. O Faz Ai atende o Brasil inteiro.
+inline const std::vector<std::pair<std::string, std::string>>& estados()
+{
+    static const std::vector<std::pair<std::string, std::string>> ESTADOS = {
+        {"AC", "Acre"}, {"AL", "Alagoas"}, {"AP", "Amapá"}, {"AM", "Amazonas"},
+        {"BA", "Bahia"}, {"CE", "Ceará"}, {"DF", "Distrito Federal"}, {"ES", "Espírito Santo"},
+        {"GO", "Goiás"}, {"MA", "Maranhão"}, {"MT", "Mato Grosso"}, {"MS", "Mato Grosso do Sul"},
+        {"MG", "Minas Gerais"}, {"PA", "Pará"}, {"PB", "Paraíba"}, {"PR", "Paraná"},
+        {"PE", "Pernambuco"}, {"PI", "Piauí"}, {"RJ", "Rio de Janeiro"}, {"RN", "Rio Grande do Norte"},
+        {"RS", "Rio Grande do Sul"}, {"RO", "Rondônia"}, {"RR", "Roraima"}, {"SC", "Santa Catarina"},
+        {"SP", "São Paulo"}, {"SE", "Sergipe"}, {"TO", "Tocantins"}
+    };
+    return ESTADOS;
+}
+
+inline std::string paraMaiusculo(std::string texto)
+{
+    for (char& c : texto)
+        c = (char)toupper((unsigned char)c);
+    return texto;
+}
+
+inline bool estadoValido(const std::string& sigla)
+{
+    for (auto& e : estados())
+        if (e.first == sigla)
+            return true;
+    return false;
 }
 
 inline std::string apenasDigitos(const std::string& texto)

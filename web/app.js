@@ -64,6 +64,18 @@ async function preencherProfissoes() {
   });
 }
 
+// ---------- estados (preenche selects) ----------
+async function preencherEstados() {
+  const r = await api("GET", "/api/estados");
+  if (!r.ok) return;
+  const opcoesHtml = '<option value="">Selecione...</option>' +
+    r.estados.map(e => `<option value="${e.sigla}">${e.nome} (${e.sigla})</option>`).join("");
+  ["#cadEstado", "#buscaEstado", "#ofEstado"].forEach(sel => {
+    const el = $(sel);
+    if (el) el.innerHTML = opcoesHtml;
+  });
+}
+
 // ---------- alternância login / cadastro ----------
 $("#linkIrCadastro").addEventListener("click", () => {
   $("#formLogin").classList.add("hidden");
@@ -119,6 +131,7 @@ $("#formCadastro").addEventListener("submit", async (e) => {
       data_nascimento: $("#cadNascimento").value.trim(),
       profissao: $("#cadProfissao").value,
       descricao: $("#cadDescricao").value.trim(),
+      estado: $("#cadEstado").value,
       cidade: $("#cadCidade").value.trim(),
       telefone: $("#cadTelefone").value.trim(),
       valor: $("#cadValor").value.trim()
@@ -179,15 +192,17 @@ $("#btnSair").addEventListener("click", () => {
 // ---------- buscar serviço ----------
 $("#btnBuscar").addEventListener("click", async () => {
   const profissao = $("#buscaProfissao").value;
+  const uf = $("#buscaEstado").value;
   const cidade = $("#buscaCidade").value.trim();
   const resultadosEl = $("#resultados");
-  if (!profissao || !cidade) {
-    resultadosEl.innerHTML = '<div class="vazio">Escolha a profissão e digite a cidade.</div>';
+  if (!profissao || !uf) {
+    resultadosEl.innerHTML = '<div class="vazio">Escolha a profissão e o estado.</div>';
     return;
   }
-  const r = await api("GET", `/api/buscar?profissao=${encodeURIComponent(profissao)}&cidade=${encodeURIComponent(cidade)}`);
+  const r = await api("GET", `/api/buscar?profissao=${encodeURIComponent(profissao)}&estado=${encodeURIComponent(uf)}&cidade=${encodeURIComponent(cidade)}`);
   if (!r.ok || r.resultados.length === 0) {
-    resultadosEl.innerHTML = `<div class="vazio">Nenhum profissional de ${profissao} encontrado em ${cidade}.</div>`;
+    const onde = cidade ? `${cidade} (${uf})` : uf;
+    resultadosEl.innerHTML = `<div class="vazio">Nenhum profissional de ${profissao} encontrado em ${onde}.</div>`;
     return;
   }
   resultadosEl.innerHTML = r.resultados.map(p => `
@@ -195,7 +210,7 @@ $("#btnBuscar").addEventListener("click", async () => {
       <div class="nome">${p.nome}</div>
       <div class="profissao-tag">${p.profissao}</div>
       <div class="linha">${p.descricao}</div>
-      <div class="linha">📍 ${p.cidade} &nbsp;·&nbsp; <a class="tel" href="tel:${p.telefone}">${p.telefone}</a></div>
+      <div class="linha">📍 ${p.cidade} - ${p.estado} &nbsp;·&nbsp; <a class="tel" href="tel:${p.telefone}">${p.telefone}</a></div>
       <div class="linha">Valor: <span class="valor">R$ ${Number(p.valor).toFixed(2).replace(".", ",")}</span></div>
     </div>
   `).join("");
@@ -210,6 +225,7 @@ async function abrirOferecer() {
     const p = r.usuario.profissional;
     $("#ofProfissao").value = p.profissao;
     $("#ofDescricao").value = p.descricao;
+    $("#ofEstado").value = p.estado;
     $("#ofCidade").value = p.cidade;
     $("#ofTelefone").value = p.telefone;
     $("#ofValor").value = String(p.valor).replace(".", ",");
@@ -227,6 +243,7 @@ $("#formOferecer").addEventListener("submit", async (e) => {
     data_nascimento: $("#ofNascimento").value.trim(),
     profissao: $("#ofProfissao").value,
     descricao: $("#ofDescricao").value.trim(),
+    estado: $("#ofEstado").value,
     cidade: $("#ofCidade").value.trim(),
     telefone: $("#ofTelefone").value.trim(),
     valor: $("#ofValor").value.trim()
@@ -254,7 +271,7 @@ async function abrirPerfil() {
     const p = u.profissional;
     html += `
     <div class="perfil-linha"><span class="rot">Profissão</span><span class="val">${p.profissao}</span></div>
-    <div class="perfil-linha"><span class="rot">Cidade</span><span class="val">${p.cidade}</span></div>
+    <div class="perfil-linha"><span class="rot">Cidade</span><span class="val">${p.cidade} - ${p.estado}</span></div>
     <div class="perfil-linha"><span class="rot">Telefone</span><span class="val">${p.telefone}</span></div>
     <div class="perfil-linha"><span class="rot">Valor</span><span class="val">R$ ${Number(p.valor).toFixed(2).replace(".", ",")}</span></div>`;
   }
@@ -265,6 +282,7 @@ async function abrirPerfil() {
 // ---------- inicialização ----------
 (async function iniciar() {
   await preencherProfissoes();
+  await preencherEstados();
   carregarSessao();
   if (estado.usuario) entrarNoMenu();
   else mostrarTela("telaAuth");

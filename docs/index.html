@@ -297,7 +297,7 @@ button.principal:focus-visible, .sair-btn:focus-visible, .tema-btn:focus-visible
   <div class="intro">
     <span class="eyebrow"><span class="pt"></span> Demonstração interativa</span>
     <h1>Faz Ai, <em>testável</em> aqui mesmo.</h1>
-    <p class="lede">O Faz Ai conecta quem precisa de um serviço a profissionais autônomos da mesma cidade. Crie uma conta, procure um eletricista em Recife ou cadastre seus próprios serviços.</p>
+    <p class="lede">O Faz Ai conecta quem precisa de um serviço a profissionais autônomos da mesma cidade. Funciona em todo o Brasil: crie uma conta, procure um profissional no seu estado ou cadastre seus próprios serviços.</p>
 
     <div class="stack-lista">
       <div class="stack-item">
@@ -319,7 +319,7 @@ button.principal:focus-visible, .sair-btn:focus-visible, .tema-btn:focus-visible
       <div class="linha"><span>profissional</span><b>mecanico@fazai.demo</b></div>
       <div class="linha"><span>cliente</span><b>cliente@fazai.demo</b></div>
       <div class="linha"><span>senha</span><b>demo1234</b></div>
-      <div style="margin-top:6px">Para buscar: Eletricista, Diarista, Mecanico ou Manicure em <b style="font-family:inherit">Recife</b>.</div>
+      <div style="margin-top:6px">Exemplos para buscar: <b style="font-family:inherit">Eletricista</b> em São Paulo, <b style="font-family:inherit">Diarista</b> na Bahia ou <b style="font-family:inherit">Mecanico</b> em Pernambuco.</div>
     </div>
 
     <div class="aviso">
@@ -379,10 +379,12 @@ button.principal:focus-visible, .sair-btn:focus-visible, .tema-btn:focus-visible
             <select id="cadProfissao"></select>
             <label for="cadDescricao">Descreva seu serviço</label>
             <textarea id="cadDescricao"></textarea>
+            <label for="cadEstado">Estado onde trabalha</label>
+            <select id="cadEstado"></select>
             <label for="cadCidade">Cidade onde trabalha</label>
-            <input type="text" id="cadCidade">
+            <input type="text" id="cadCidade" placeholder="Ex: Campinas">
             <label for="cadTelefone">Telefone</label>
-            <input type="text" id="cadTelefone" placeholder="(81) 99999-9999">
+            <input type="text" id="cadTelefone" placeholder="(DDD) 99999-9999">
             <label for="cadValor">Valor do serviço (R$)</label>
             <input type="text" id="cadValor" placeholder="300,00">
           </div>
@@ -405,7 +407,7 @@ button.principal:focus-visible, .sair-btn:focus-visible, .tema-btn:focus-visible
         <div class="menu">
           <div class="menu-item" data-acao="buscar">
             <div class="icone">🔎</div>
-            <div><div class="rotulo">Procurar um serviço</div><div class="desc">Encontre profissionais na sua cidade</div></div>
+            <div><div class="rotulo">Procurar um serviço</div><div class="desc">Encontre profissionais em todo o Brasil</div></div>
           </div>
           <div class="menu-item hidden" id="itemOferecer" data-acao="oferecer">
             <div class="icone">🛠️</div>
@@ -424,11 +426,13 @@ button.principal:focus-visible, .sair-btn:focus-visible, .tema-btn:focus-visible
         <button class="voltar" data-voltar="menu">← Voltar</button>
         <div class="cartao">
         <h2 class="card-titulo">Procurar serviço</h2>
-        <p class="subtitulo">Escolha a profissão e a cidade.</p>
+        <p class="subtitulo">Escolha a profissão e o estado. A cidade é opcional.</p>
         <label for="buscaProfissao">Profissão</label>
         <select id="buscaProfissao"></select>
-        <label for="buscaCidade">Cidade</label>
-        <input type="text" id="buscaCidade" placeholder="Ex: Recife">
+        <label for="buscaEstado">Estado</label>
+        <select id="buscaEstado"></select>
+        <label for="buscaCidade">Cidade (opcional)</label>
+        <input type="text" id="buscaCidade" placeholder="Deixe em branco para ver o estado todo">
         <button class="principal" id="btnBuscar">Buscar</button>
         <div id="resultados"></div>
         </div>
@@ -449,10 +453,12 @@ button.principal:focus-visible, .sair-btn:focus-visible, .tema-btn:focus-visible
           <select id="ofProfissao"></select>
           <label for="ofDescricao">Descreva seu serviço</label>
           <textarea id="ofDescricao"></textarea>
+          <label for="ofEstado">Estado onde trabalha</label>
+          <select id="ofEstado"></select>
           <label for="ofCidade">Cidade onde trabalha</label>
-          <input type="text" id="ofCidade">
+          <input type="text" id="ofCidade" placeholder="Ex: Campinas">
           <label for="ofTelefone">Telefone</label>
-          <input type="text" id="ofTelefone" placeholder="(81) 99999-9999">
+          <input type="text" id="ofTelefone" placeholder="(DDD) 99999-9999">
           <label for="ofValor">Valor do serviço (R$)</label>
           <input type="text" id="ofValor" placeholder="300,00">
           <button type="submit" class="principal">Salvar</button>
@@ -491,6 +497,18 @@ const PROFISSOES = [
   "Costureiro","Decorador","Cerimonialista","Cuidador de Idosos","Baba","Pet Sitter",
   "Adestrador de Caes","Tecnico de Seguranca Eletronica"
 ];
+
+const ESTADOS = [
+  ["AC","Acre"],["AL","Alagoas"],["AP","Amapá"],["AM","Amazonas"],["BA","Bahia"],["CE","Ceará"],
+  ["DF","Distrito Federal"],["ES","Espírito Santo"],["GO","Goiás"],["MA","Maranhão"],["MT","Mato Grosso"],
+  ["MS","Mato Grosso do Sul"],["MG","Minas Gerais"],["PA","Pará"],["PB","Paraíba"],["PR","Paraná"],
+  ["PE","Pernambuco"],["PI","Piauí"],["RJ","Rio de Janeiro"],["RN","Rio Grande do Norte"],
+  ["RS","Rio Grande do Sul"],["RO","Rondônia"],["RR","Roraima"],["SC","Santa Catarina"],
+  ["SP","São Paulo"],["SE","Sergipe"],["TO","Tocantins"]
+];
+function estadoValido(uf){ return ESTADOS.some(e => e[0] === uf); }
+// Compara cidades ignorando acentos, maiúsculas e espaços nas pontas ("sao paulo" = "São Paulo")
+function normalizar(t){ return (t||"").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim(); }
 
 function apenasDigitos(t){ return (t||"").replace(/\D/g, ""); }
 function paraMinusculo(t){ return (t||"").toLowerCase(); }
@@ -553,7 +571,7 @@ async function hashSenha(senha){
 }
 
 // ---------- "banco" em localStorage ----------
-const DB_KEY = "fazai_demo_db_v2";
+const DB_KEY = "fazai_demo_db_v3";
 function dbLer(){
   try {
     const raw = localStorage.getItem(DB_KEY);
@@ -571,23 +589,32 @@ async function dbSeed(){
       { id:1, nome:"Carlos Mecânico", email:"mecanico@fazai.demo", senha_hash:hash, tipo:"profissional" },
       { id:2, nome:"Ana Cliente", email:"cliente@fazai.demo", senha_hash:hash, tipo:"cliente" },
       { id:3, nome:"Paulo Eletricista", email:"eletricista@fazai.demo", senha_hash:hash, tipo:"profissional" },
-      { id:4, nome:"Rita Diarista", email:"diarista@fazai.demo", senha_hash:hash, tipo:"profissional" },
-      { id:5, nome:"Joana Manicure", email:"manicure@fazai.demo", senha_hash:hash, tipo:"profissional" },
-      { id:6, nome:"Marcos Instalações", email:"marcos@fazai.demo", senha_hash:hash, tipo:"profissional" }
+      { id:4, nome:"Marcos Instalações", email:"marcos@fazai.demo", senha_hash:hash, tipo:"profissional" },
+      { id:5, nome:"Rita Diarista", email:"diarista@fazai.demo", senha_hash:hash, tipo:"profissional" },
+      { id:6, nome:"Joana Manicure", email:"manicure@fazai.demo", senha_hash:hash, tipo:"profissional" },
+      { id:7, nome:"Sérgio Encanador", email:"encanador@fazai.demo", senha_hash:hash, tipo:"profissional" },
+      { id:8, nome:"Luana Diarista", email:"luana@fazai.demo", senha_hash:hash, tipo:"profissional" },
+      { id:9, nome:"Rafael Pintor", email:"pintor@fazai.demo", senha_hash:hash, tipo:"profissional" },
+      { id:10, nome:"Fernanda Técnica", email:"tecnica@fazai.demo", senha_hash:hash, tipo:"profissional" },
+      { id:11, nome:"Bruno Ar-Condicionado", email:"bruno@fazai.demo", senha_hash:hash, tipo:"profissional" },
+      { id:12, nome:"Cláudia Cuidadora", email:"cuidadora@fazai.demo", senha_hash:hash, tipo:"profissional" },
+      { id:13, nome:"Diego Pedreiro", email:"pedreiro@fazai.demo", senha_hash:hash, tipo:"profissional" }
     ],
     profissionais: [
-      { usuario_id:1, nome:"Carlos Mecânico", cpf:"52998224725", data_nascimento:"07/08/1990",
-        profissao:"Mecanico", descricao:"Revisão, freios e suspensão. Atendo no local.", cidade:"recife", telefone:"(81) 90000-0001", valor:300.00 },
-      { usuario_id:3, nome:"Paulo Eletricista", cpf:"", data_nascimento:"12/03/1985",
-        profissao:"Eletricista", descricao:"Instalação de tomadas, chuveiros e quadros de luz.", cidade:"recife", telefone:"(81) 90000-0002", valor:150.00 },
-      { usuario_id:4, nome:"Rita Diarista", cpf:"", data_nascimento:"25/11/1988",
-        profissao:"Diarista", descricao:"Limpeza completa de casas e apartamentos.", cidade:"recife", telefone:"(81) 90000-0003", valor:180.00 },
-      { usuario_id:5, nome:"Joana Manicure", cpf:"", data_nascimento:"02/06/1996",
-        profissao:"Manicure", descricao:"Mãos e pés, atendimento a domicílio.", cidade:"recife", telefone:"(81) 90000-0004", valor:60.00 },
-      { usuario_id:6, nome:"Marcos Instalações", cpf:"", data_nascimento:"18/09/1992",
-        profissao:"Eletricista", descricao:"Elétrica residencial e manutenção predial.", cidade:"olinda", telefone:"(81) 90000-0005", valor:200.00 }
+      { usuario_id:1, nome:"Carlos Mecânico", cpf:"52998224725", data_nascimento:"07/08/1990", profissao:"Mecanico", descricao:"Revisão, freios e suspensão. Atendo no local.", estado:"PE", cidade:"Recife", telefone:"(81) 90000-0001", valor:300.00 },
+      { usuario_id:3, nome:"Paulo Eletricista", cpf:"", data_nascimento:"12/03/1985", profissao:"Eletricista", descricao:"Instalação de tomadas, chuveiros e quadros de luz.", estado:"SP", cidade:"São Paulo", telefone:"(11) 90000-0002", valor:150.00 },
+      { usuario_id:4, nome:"Marcos Instalações", cpf:"", data_nascimento:"18/09/1992", profissao:"Eletricista", descricao:"Elétrica residencial e manutenção predial.", estado:"SP", cidade:"Campinas", telefone:"(19) 90000-0003", valor:200.00 },
+      { usuario_id:5, nome:"Rita Diarista", cpf:"", data_nascimento:"25/11/1988", profissao:"Diarista", descricao:"Limpeza completa de casas e apartamentos.", estado:"BA", cidade:"Salvador", telefone:"(71) 90000-0004", valor:180.00 },
+      { usuario_id:6, nome:"Joana Manicure", cpf:"", data_nascimento:"02/06/1996", profissao:"Manicure", descricao:"Mãos e pés, atendimento a domicílio.", estado:"RJ", cidade:"Rio de Janeiro", telefone:"(21) 90000-0005", valor:60.00 },
+      { usuario_id:7, nome:"Sérgio Encanador", cpf:"", data_nascimento:"30/01/1983", profissao:"Encanador", descricao:"Vazamentos, desentupimento e instalação de pias.", estado:"MG", cidade:"Belo Horizonte", telefone:"(31) 90000-0006", valor:160.00 },
+      { usuario_id:8, nome:"Luana Diarista", cpf:"", data_nascimento:"14/04/1994", profissao:"Diarista", descricao:"Faxina semanal ou quinzenal.", estado:"CE", cidade:"Fortaleza", telefone:"(85) 90000-0007", valor:150.00 },
+      { usuario_id:9, nome:"Rafael Pintor", cpf:"", data_nascimento:"09/10/1987", profissao:"Pintor", descricao:"Pintura interna e externa, textura e grafiato.", estado:"RS", cidade:"Porto Alegre", telefone:"(51) 90000-0008", valor:250.00 },
+      { usuario_id:10, nome:"Fernanda Técnica", cpf:"", data_nascimento:"21/07/1995", profissao:"Tecnico de Informatica", descricao:"Formatação, redes e manutenção de computadores.", estado:"PR", cidade:"Curitiba", telefone:"(41) 90000-0009", valor:120.00 },
+      { usuario_id:11, nome:"Bruno Ar-Condicionado", cpf:"", data_nascimento:"05/12/1989", profissao:"Instalador de Ar-Condicionado", descricao:"Instalação e limpeza de split.", estado:"AM", cidade:"Manaus", telefone:"(92) 90000-0010", valor:280.00 },
+      { usuario_id:12, nome:"Cláudia Cuidadora", cpf:"", data_nascimento:"17/02/1980", profissao:"Cuidador de Idosos", descricao:"Acompanhamento diurno e noturno.", estado:"DF", cidade:"Brasília", telefone:"(61) 90000-0011", valor:200.00 },
+      { usuario_id:13, nome:"Diego Pedreiro", cpf:"", data_nascimento:"28/05/1986", profissao:"Pedreiro", descricao:"Reformas, alvenaria e contrapiso.", estado:"PA", cidade:"Belém", telefone:"(91) 90000-0012", valor:220.00 }
     ],
-    nextId: 7
+    nextId: 14
   };
 }
 
@@ -614,6 +641,10 @@ function mostrarOk(id,msg){ const el=$("#"+id); el.textContent=msg; el.style.dis
 function preencherProfissoes(){
   const html = '<option value="">Selecione...</option>' + PROFISSOES.map(p=>`<option value="${p}">${p}</option>`).join("");
   ["#cadProfissao","#buscaProfissao","#ofProfissao"].forEach(sel=>{ const el=$(sel); if (el) el.innerHTML = html; });
+}
+function preencherEstados(){
+  const html = '<option value="">Selecione...</option>' + ESTADOS.map(([uf,nome])=>`<option value="${uf}">${nome} (${uf})</option>`).join("");
+  ["#cadEstado","#buscaEstado","#ofEstado"].forEach(sel=>{ const el=$(sel); if (el) el.innerHTML = html; });
 }
 
 // ---------- navegação login/cadastro ----------
@@ -676,6 +707,7 @@ $("#formCadastro").addEventListener("submit", async (e)=>{
     const dataNasc = $("#cadNascimento").value.trim();
     const profissao = $("#cadProfissao").value;
     const descricao = $("#cadDescricao").value.trim();
+    const uf = $("#cadEstado").value;
     const cidade = $("#cadCidade").value.trim();
     const telefone = $("#cadTelefone").value.trim();
     const valorTxt = $("#cadValor").value.trim();
@@ -684,6 +716,7 @@ $("#formCadastro").addEventListener("submit", async (e)=>{
     if (!dataValida(dataNasc)){ mostrarErro("cadastroErro","Data de nascimento inválida."); return; }
     if (!PROFISSOES.includes(profissao)){ mostrarErro("cadastroErro","Profissão inválida."); return; }
     if (!descricao){ mostrarErro("cadastroErro","A descrição não pode ficar vazia."); return; }
+    if (!estadoValido(uf)){ mostrarErro("cadastroErro","Escolha o estado onde você trabalha."); return; }
     if (!cidade){ mostrarErro("cadastroErro","A cidade não pode ficar vazia."); return; }
     if (!telefoneValido(telefone)){ mostrarErro("cadastroErro","Telefone inválido. Digite 10 ou 11 números."); return; }
     if (!valorValido(valorTxt)){ mostrarErro("cadastroErro","Valor do serviço inválido."); return; }
@@ -692,7 +725,7 @@ $("#formCadastro").addEventListener("submit", async (e)=>{
     if (DB.profissionais.some(p => p.cpf === cpfDigitos)){
       mostrarErro("cadastroErro","Este CPF já está cadastrado."); return;
     }
-    dadosProfissional = { nome, cpf:cpfDigitos, data_nascimento:dataNasc, profissao, descricao, cidade, telefone, valor:valorParaNumero(valorTxt) };
+    dadosProfissional = { nome, cpf:cpfDigitos, data_nascimento:dataNasc, profissao, descricao, estado:uf, cidade, telefone, valor:valorParaNumero(valorTxt) };
   }
 
   const hash = await hashSenha(senha);
@@ -750,17 +783,21 @@ $("#btnSair").addEventListener("click", ()=>{
 // ---------- buscar ----------
 $("#btnBuscar").addEventListener("click", ()=>{
   const profissao = $("#buscaProfissao").value;
+  const uf = $("#buscaEstado").value;
   const cidade = $("#buscaCidade").value.trim();
   const el = $("#resultados");
-  if (!profissao || !cidade){ el.innerHTML = '<div class="vazio">Escolha a profissão e digite a cidade.</div>'; return; }
-  const resultados = DB.profissionais.filter(p => p.profissao === profissao && paraMinusculo(p.cidade) === paraMinusculo(cidade));
-  if (resultados.length === 0){ el.innerHTML = `<div class="vazio">Nenhum profissional de ${profissao} encontrado em ${cidade}.</div>`; return; }
+  if (!profissao || !uf){ el.innerHTML = '<div class="vazio">Escolha a profissão e o estado.</div>'; return; }
+  const resultados = DB.profissionais
+    .filter(p => p.profissao === profissao && p.estado === uf && (!cidade || normalizar(p.cidade) === normalizar(cidade)))
+    .sort((a,b) => a.cidade.localeCompare(b.cidade, "pt-BR"));
+  const onde = cidade ? `${cidade} (${uf})` : uf;
+  if (resultados.length === 0){ el.innerHTML = `<div class="vazio">Nenhum profissional de ${profissao} encontrado em ${onde}.</div>`; return; }
   el.innerHTML = resultados.map(p => `
     <div class="resultado-card">
       <div class="nome">${p.nome}</div>
       <div class="profissao-tag">${p.profissao}</div>
       <div class="linha">${p.descricao}</div>
-      <div class="linha">📍 ${p.cidade} &nbsp;·&nbsp; <a class="tel num" href="tel:${p.telefone}">${p.telefone}</a></div>
+      <div class="linha">📍 ${p.cidade} - ${p.estado} &nbsp;·&nbsp; <a class="tel num" href="tel:${p.telefone}">${p.telefone}</a></div>
       <div class="linha">Valor: <span class="valor num">R$ ${Number(p.valor).toFixed(2).replace(".", ",")}</span></div>
     </div>
   `).join("");
@@ -776,6 +813,7 @@ function abrirOferecer(){
     $("#ofNascimento").value = p.data_nascimento;
     $("#ofProfissao").value = p.profissao;
     $("#ofDescricao").value = p.descricao;
+    $("#ofEstado").value = p.estado;
     $("#ofCidade").value = p.cidade;
     $("#ofTelefone").value = p.telefone;
     $("#ofValor").value = String(p.valor).replace(".", ",");
@@ -794,6 +832,7 @@ $("#formOferecer").addEventListener("submit", (e)=>{
   const dataNasc = $("#ofNascimento").value.trim();
   const profissao = $("#ofProfissao").value;
   const descricao = $("#ofDescricao").value.trim();
+  const uf = $("#ofEstado").value;
   const cidade = $("#ofCidade").value.trim();
   const telefone = $("#ofTelefone").value.trim();
   const valorTxt = $("#ofValor").value.trim();
@@ -802,6 +841,7 @@ $("#formOferecer").addEventListener("submit", (e)=>{
   if (!dataValida(dataNasc)){ mostrarErro("oferecerErro","Data de nascimento inválida."); return; }
   if (!PROFISSOES.includes(profissao)){ mostrarErro("oferecerErro","Profissão inválida."); return; }
   if (!descricao){ mostrarErro("oferecerErro","A descrição não pode ficar vazia."); return; }
+  if (!estadoValido(uf)){ mostrarErro("oferecerErro","Escolha o estado onde você trabalha."); return; }
   if (!cidade){ mostrarErro("oferecerErro","A cidade não pode ficar vazia."); return; }
   if (!telefoneValido(telefone)){ mostrarErro("oferecerErro","Telefone inválido. Digite 10 ou 11 números."); return; }
   if (!valorValido(valorTxt)){ mostrarErro("oferecerErro","Valor do serviço inválido."); return; }
@@ -813,7 +853,7 @@ $("#formOferecer").addEventListener("submit", (e)=>{
 
   const existente = DB.profissionais.find(p => p.usuario_id === estado.usuario.id);
   const registro = { usuario_id: estado.usuario.id, nome: estado.usuario.nome, cpf: cpfDigitos,
-    data_nascimento: dataNasc, profissao, descricao, cidade, telefone, valor: valorParaNumero(valorTxt) };
+    data_nascimento: dataNasc, profissao, descricao, estado: uf, cidade, telefone, valor: valorParaNumero(valorTxt) };
   if (existente) Object.assign(existente, registro);
   else DB.profissionais.push(registro);
   dbGravar(DB);
@@ -832,7 +872,7 @@ function abrirPerfil(){
   if (p){
     html += `
     <div class="perfil-linha"><span class="rot">Profissão</span><span class="val">${p.profissao}</span></div>
-    <div class="perfil-linha"><span class="rot">Cidade</span><span class="val">${p.cidade}</span></div>
+    <div class="perfil-linha"><span class="rot">Cidade</span><span class="val">${p.cidade} - ${p.estado}</span></div>
     <div class="perfil-linha"><span class="rot">Telefone</span><span class="val num">${p.telefone}</span></div>
     <div class="perfil-linha"><span class="rot">Valor</span><span class="val num">R$ ${Number(p.valor).toFixed(2).replace(".", ",")}</span></div>`;
   }
@@ -851,6 +891,7 @@ $("#btnResetar").addEventListener("click", async ()=>{
 // ---------- inicialização ----------
 (async function iniciar(){
   preencherProfissoes();
+  preencherEstados();
   await dbInit();
   mostrarTela("telaAuth");
 })();

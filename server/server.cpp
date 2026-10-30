@@ -51,6 +51,13 @@ int main(int argc, char** argv)
         res.set_content(json{{"ok", true}, {"profissoes", lista}}.dump(), "application/json");
     });
 
+    // -------- GET /api/estados --------
+    svc.Get("/api/estados", [](const httplib::Request&, httplib::Response& res) {
+        json lista = json::array();
+        for (auto& e : estados()) lista.push_back({{"sigla", e.first}, {"nome", e.second}});
+        res.set_content(json{{"ok", true}, {"estados", lista}}.dump(), "application/json");
+    });
+
     // -------- POST /api/cadastro --------
     svc.Post("/api/cadastro", [](const httplib::Request& req, httplib::Response& res) {
         std::lock_guard<std::mutex> lock(dbMutex);
@@ -84,6 +91,7 @@ int main(int argc, char** argv)
                 std::string dataNasc = body.value("data_nascimento", "");
                 std::string profissao = body.value("profissao", "");
                 std::string descricao = body.value("descricao", "");
+                std::string estado = paraMaiusculo(body.value("estado", ""));
                 std::string cidade = body.value("cidade", "");
                 std::string telefone = body.value("telefone", "");
                 std::string valorTxt = body.value("valor", "");
@@ -95,6 +103,7 @@ int main(int argc, char** argv)
                 if (!dataValida(dataNasc))    { tx.abort(); res.set_content(erro("Data de nascimento inválida.").dump(), "application/json"); return; }
                 if (!profissaoValida)         { tx.abort(); res.set_content(erro("Profissão inválida.").dump(), "application/json"); return; }
                 if (descricao.empty())        { tx.abort(); res.set_content(erro("A descrição não pode ficar vazia.").dump(), "application/json"); return; }
+                if (!estadoValido(estado))     { tx.abort(); res.set_content(erro("Escolha o estado onde você trabalha.").dump(), "application/json"); return; }
                 if (cidade.empty())            { tx.abort(); res.set_content(erro("A cidade não pode ficar vazia.").dump(), "application/json"); return; }
                 if (!telefoneValido(telefone)) { tx.abort(); res.set_content(erro("Telefone inválido. Digite 10 ou 11 números.").dump(), "application/json"); return; }
                 if (!valorValido(valorTxt))    { tx.abort(); res.set_content(erro("Valor do serviço inválido.").dump(), "application/json"); return; }
@@ -104,9 +113,9 @@ int main(int argc, char** argv)
                 if (!cpfExiste.empty()) { tx.abort(); res.set_content(erro("Este CPF já está cadastrado.").dump(), "application/json"); return; }
 
                 tx.exec_params(
-                    "INSERT INTO profissionais (usuario_id, nome, cpf, data_nascimento, profissao, descricao, cidade, telefone, valor) "
-                    "VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)",
-                    usuarioId, nome, cpfDigitos, dataParaISO(dataNasc), profissao, descricao, cidade, telefone,
+                    "INSERT INTO profissionais (usuario_id, nome, cpf, data_nascimento, profissao, descricao, estado, cidade, telefone, valor) "
+                    "VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
+                    usuarioId, nome, cpfDigitos, dataParaISO(dataNasc), profissao, descricao, estado, cidade, telefone,
                     valorParaNumero(valorTxt));
             }
 
@@ -171,7 +180,7 @@ int main(int argc, char** argv)
 
             if (row["tipo"].as<std::string>() == "profissional") {
                 auto rp = tx.exec_params(
-                    "SELECT p.nome, p.profissao, p.descricao, p.cidade, p.telefone, p.valor "
+                    "SELECT p.nome, p.profissao, p.descricao, p.estado, p.cidade, p.telefone, p.valor "
                     "FROM profissionais p WHERE p.usuario_id = $1", row["id"].as<long long>());
                 if (!rp.empty()) {
                     auto pr = rp[0];
@@ -179,6 +188,7 @@ int main(int argc, char** argv)
                         {"nome", pr["nome"].as<std::string>()},
                         {"profissao", pr["profissao"].as<std::string>()},
                         {"descricao", pr["descricao"].as<std::string>()},
+                        {"estado", pr["estado"].as<std::string>()},
                         {"cidade", pr["cidade"].as<std::string>()},
                         {"telefone", pr["telefone"].as<std::string>()},
                         {"valor", pr["valor"].as<double>()}
@@ -215,6 +225,7 @@ int main(int argc, char** argv)
             std::string dataNasc = body.value("data_nascimento", "");
             std::string profissao = body.value("profissao", "");
             std::string descricao = body.value("descricao", "");
+            std::string estado = paraMaiusculo(body.value("estado", ""));
             std::string cidade = body.value("cidade", "");
             std::string telefone = body.value("telefone", "");
             std::string valorTxt = body.value("valor", "");
@@ -226,6 +237,7 @@ int main(int argc, char** argv)
             if (!dataValida(dataNasc))     { res.set_content(erro("Data de nascimento inválida.").dump(), "application/json"); return; }
             if (!profissaoValida)          { res.set_content(erro("Profissão inválida.").dump(), "application/json"); return; }
             if (descricao.empty())         { res.set_content(erro("A descrição não pode ficar vazia.").dump(), "application/json"); return; }
+            if (!estadoValido(estado))     { res.set_content(erro("Escolha o estado onde você trabalha.").dump(), "application/json"); return; }
             if (cidade.empty())            { res.set_content(erro("A cidade não pode ficar vazia.").dump(), "application/json"); return; }
             if (!telefoneValido(telefone)) { res.set_content(erro("Telefone inválido. Digite 10 ou 11 números.").dump(), "application/json"); return; }
             if (!valorValido(valorTxt))    { res.set_content(erro("Valor do serviço inválido.").dump(), "application/json"); return; }
@@ -236,11 +248,11 @@ int main(int argc, char** argv)
             if (!cpfExiste.empty()) { res.set_content(erro("Este CPF já está cadastrado para outra conta.").dump(), "application/json"); return; }
 
             tx.exec_params(
-                "INSERT INTO profissionais (usuario_id, nome, cpf, data_nascimento, profissao, descricao, cidade, telefone, valor) "
-                "VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) "
+                "INSERT INTO profissionais (usuario_id, nome, cpf, data_nascimento, profissao, descricao, estado, cidade, telefone, valor) "
+                "VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) "
                 "ON CONFLICT (usuario_id) DO UPDATE SET nome=$2, cpf=$3, data_nascimento=$4, profissao=$5, "
-                "descricao=$6, cidade=$7, telefone=$8, valor=$9",
-                usuarioId, nome, cpfDigitos, dataParaISO(dataNasc), profissao, descricao, cidade, telefone,
+                "descricao=$6, estado=$7, cidade=$8, telefone=$9, valor=$10",
+                usuarioId, nome, cpfDigitos, dataParaISO(dataNasc), profissao, descricao, estado, cidade, telefone,
                 valorParaNumero(valorTxt));
 
             tx.commit();
@@ -251,19 +263,26 @@ int main(int argc, char** argv)
         }
     });
 
-    // -------- GET /api/buscar?profissao=&cidade= --------
+    // -------- GET /api/buscar?profissao=&estado=&cidade= --------
+    // A cidade é opcional: sem ela, a busca traz o estado inteiro.
+    // Acentos e maiúsculas são ignorados ("sao paulo" encontra "São Paulo").
     svc.Get("/api/buscar", [](const httplib::Request& req, httplib::Response& res) {
         std::lock_guard<std::mutex> lock(dbMutex);
         try {
             std::string profissao = req.get_param_value("profissao");
+            std::string estado = paraMaiusculo(req.get_param_value("estado"));
             std::string cidade = req.get_param_value("cidade");
+
+            if (!estadoValido(estado)) { res.set_content(erro("Escolha um estado.").dump(), "application/json"); return; }
 
             pqxx::connection conn(connString());
             pqxx::work tx(conn);
             auto r = tx.exec_params(
-                "SELECT nome, profissao, descricao, cidade, telefone, valor FROM profissionais "
-                "WHERE profissao = $1 AND lower(cidade) = lower($2) ORDER BY criado_em DESC",
-                profissao, cidade);
+                "SELECT nome, profissao, descricao, estado, cidade, telefone, valor FROM profissionais "
+                "WHERE profissao = $1 AND estado = $2 "
+                "AND ($3::text = '' OR unaccent(lower(trim(cidade))) = unaccent(lower(trim($3::text)))) "
+                "ORDER BY cidade, criado_em DESC",
+                profissao, estado, cidade);
             tx.commit();
 
             json resultados = json::array();
@@ -272,6 +291,7 @@ int main(int argc, char** argv)
                     {"nome", row["nome"].as<std::string>()},
                     {"profissao", row["profissao"].as<std::string>()},
                     {"descricao", row["descricao"].as<std::string>()},
+                    {"estado", row["estado"].as<std::string>()},
                     {"cidade", row["cidade"].as<std::string>()},
                     {"telefone", row["telefone"].as<std::string>()},
                     {"valor", row["valor"].as<double>()}

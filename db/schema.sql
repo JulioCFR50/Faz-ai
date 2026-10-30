@@ -1,6 +1,9 @@
 -- Faz Ai - schema PostgreSQL
 -- Substitui os arquivos usuarios.txt / profissionais.txt do programa original em C++
 
+-- unaccent: permite buscar cidades ignorando acentos ("sao paulo" = "São Paulo")
+CREATE EXTENSION IF NOT EXISTS unaccent;
+
 CREATE TABLE IF NOT EXISTS usuarios (
     id          SERIAL PRIMARY KEY,
     nome        VARCHAR(150) NOT NULL,
@@ -18,13 +21,20 @@ CREATE TABLE IF NOT EXISTS profissionais (
     data_nascimento  DATE         NOT NULL,
     profissao        VARCHAR(80)  NOT NULL,
     descricao        TEXT         NOT NULL,
+    estado           CHAR(2)      NOT NULL,      -- sigla da UF (SP, RJ, PE...)
     cidade           VARCHAR(100) NOT NULL,
     telefone         VARCHAR(20)  NOT NULL,
     valor            NUMERIC(10,2) NOT NULL,
     criado_em        TIMESTAMP NOT NULL DEFAULT now()
 );
 
-CREATE INDEX IF NOT EXISTS idx_profissionais_busca ON profissionais (profissao, cidade);
+-- Bancos criados antes da coluna estado: adiciona a coluna e marca os registros antigos como PE
+ALTER TABLE profissionais ADD COLUMN IF NOT EXISTS estado CHAR(2);
+UPDATE profissionais SET estado = 'PE' WHERE estado IS NULL;
+ALTER TABLE profissionais ALTER COLUMN estado SET NOT NULL;
+
+DROP INDEX IF EXISTS idx_profissionais_busca;
+CREATE INDEX IF NOT EXISTS idx_profissionais_busca ON profissionais (profissao, estado);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_profissionais_usuario ON profissionais (usuario_id);
 
 -- Dados de exemplo migrados dos arquivos usuarios.txt / profissionais.txt originais
@@ -34,8 +44,8 @@ INSERT INTO usuarios (nome, email, senha_hash, tipo) VALUES
     ('alberto da silva', 'albertobatista88@gmail.com', '18562497ced30db1ddf73e117ec8d6ebcb4f63e9aad3549cb930fe8c00282c43', 'cliente')
 ON CONFLICT (email) DO NOTHING;
 
-INSERT INTO profissionais (usuario_id, nome, cpf, data_nascimento, profissao, descricao, cidade, telefone, valor)
+INSERT INTO profissionais (usuario_id, nome, cpf, data_nascimento, profissao, descricao, estado, cidade, telefone, valor)
 SELECT u.id, 'alberto da silva batista', '09807476437', DATE '1994-08-07', 'Mecanico',
-       'serviço de mecanico em geral', 'recife', '81995248740', 300.00
+       'serviço de mecanico em geral', 'PE', 'recife', '81995248740', 300.00
 FROM usuarios u WHERE u.email = 'albertobatista@gmail.com'
 ON CONFLICT (cpf) DO NOTHING;

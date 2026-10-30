@@ -84,11 +84,14 @@
         <label for="cadDescricao">Descreva seu serviço</label>
         <textarea id="cadDescricao"></textarea>
 
+        <label for="cadEstado">Estado onde trabalha</label>
+        <select id="cadEstado"></select>
+
         <label for="cadCidade">Cidade onde trabalha</label>
-        <input type="text" id="cadCidade">
+        <input type="text" id="cadCidade" placeholder="Ex: Campinas">
 
         <label for="cadTelefone">Telefone</label>
-        <input type="text" id="cadTelefone" placeholder="(81) 99999-9999">
+        <input type="text" id="cadTelefone" placeholder="(DDD) 99999-9999">
 
         <label for="cadValor">Valor do serviço (R$)</label>
         <input type="text" id="cadValor" placeholder="300,00">
@@ -111,7 +114,7 @@
   <div class="menu">
     <div class="menu-item" data-acao="buscar">
       <div class="icone">🔎</div>
-      <div><div class="rotulo">Procurar um serviço</div><div class="desc">Encontre profissionais na sua cidade</div></div>
+      <div><div class="rotulo">Procurar um serviço</div><div class="desc">Encontre profissionais em todo o Brasil</div></div>
     </div>
     <div class="menu-item hidden" id="itemOferecer" data-acao="oferecer">
       <div class="icone">🛠️</div>
@@ -129,11 +132,13 @@
   <button class="voltar" data-voltar="menu">← Voltar</button>
   <div class="card">
     <h1 class="titulo">Procurar serviço</h1>
-    <p class="subtitulo">Escolha a profissão e a cidade.</p>
+    <p class="subtitulo">Escolha a profissão e o estado. A cidade é opcional.</p>
     <label for="buscaProfissao">Profissão</label>
     <select id="buscaProfissao"></select>
-    <label for="buscaCidade">Cidade</label>
-    <input type="text" id="buscaCidade" placeholder="Ex: Recife">
+    <label for="buscaEstado">Estado</label>
+    <select id="buscaEstado"></select>
+    <label for="buscaCidade">Cidade (opcional)</label>
+    <input type="text" id="buscaCidade" placeholder="Deixe em branco para ver o estado todo">
     <button class="principal" id="btnBuscar">Buscar</button>
   </div>
   <div id="resultados"></div>
@@ -154,10 +159,12 @@
       <select id="ofProfissao"></select>
       <label for="ofDescricao">Descreva seu serviço</label>
       <textarea id="ofDescricao"></textarea>
+      <label for="ofEstado">Estado onde trabalha</label>
+      <select id="ofEstado"></select>
       <label for="ofCidade">Cidade onde trabalha</label>
-      <input type="text" id="ofCidade">
+      <input type="text" id="ofCidade" placeholder="Ex: Campinas">
       <label for="ofTelefone">Telefone</label>
-      <input type="text" id="ofTelefone" placeholder="(81) 99999-9999">
+      <input type="text" id="ofTelefone" placeholder="(DDD) 99999-9999">
       <label for="ofValor">Valor do serviço (R$)</label>
       <input type="text" id="ofValor" placeholder="300,00">
       <button type="submit" class="principal">Salvar</button>

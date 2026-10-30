@@ -1,7 +1,7 @@
 // sw.js - Service Worker do Faz Ai
 // Cacheia os arquivos estáticos (app shell) para permitir instalação como PWA
 // e abertura rápida/offline da interface. As chamadas /api/* sempre vão para a rede.
-const CACHE = "fazai-v1";
+const CACHE = "fazai-v2";
 const ARQUIVOS = [
   "/", "/index.html", "/styles.css", "/app.js", "/manifest.json",
   "/icon-192.png", "/icon-512.png", "/icon-maskable-512.png"
