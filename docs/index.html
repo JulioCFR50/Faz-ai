@@ -4,6 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Faz Ai</title>
+<meta name="description" content="Encontre ou ofereça serviços em todo o Brasil">
+<meta name="theme-color" content="#1f7a4d">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
@@ -278,6 +283,15 @@ button.principal:focus-visible, .sair-btn:focus-visible, .tema-btn:focus-visible
 
 .hidden{display:none !important}
 ::selection{ background: var(--accent-soft); }
+
+/* Quando aberto como app instalado (APK/PWA): só a tela do app, em tela cheia,
+   sem a coluna de apresentação e sem a moldura de celular. */
+/* A classe modo-app é ligada pelo script logo abaixo (app Android ou PWA instalado). */
+html.modo-app .stage{ display:block; max-width:none; padding:0; }
+html.modo-app .intro{ display:none; }
+html.modo-app .telefone{ max-width:none; min-height:100vh; border:none; border-radius:0; box-shadow:none; }
+html.modo-app .notch{ display:none; }
+html.modo-app .topbar{ padding-top:calc(14px + env(safe-area-inset-top, 0px)); }
 </style>
 
 <script>
@@ -289,6 +303,12 @@ button.principal:focus-visible, .sair-btn:focus-visible, .tema-btn:focus-visible
     if (salvo === "light" || salvo === "dark") document.documentElement.setAttribute("data-theme", salvo);
   }catch(e){}
 })();
+// Dentro do app Android (WebView com "FazAiApp" no user agent) ou como PWA instalado,
+// mostra só a tela do aplicativo.
+const NO_APP_ANDROID = navigator.userAgent.includes("FazAiApp");
+if (NO_APP_ANDROID || window.matchMedia("(display-mode: standalone)").matches) {
+  document.documentElement.classList.add("modo-app");
+}
 </script>
 
 <div class="stage">
@@ -894,6 +914,11 @@ $("#btnResetar").addEventListener("click", async ()=>{
   preencherEstados();
   await dbInit();
   mostrarTela("telaAuth");
+
+  // No app Android os arquivos já vêm dentro do APK, então o service worker não é usado.
+  if ("serviceWorker" in navigator && !NO_APP_ANDROID) {
+    navigator.serviceWorker.register("sw.js").catch(() => {});
+  }
 })();
 </script>
 
